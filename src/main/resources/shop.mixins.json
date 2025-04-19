@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "package": "cn.wensc.mitemod.shop.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "target": "DEFAULT",
+  "minVersion": "0.8.3",
+  "mixins": [
+    "ClientPlayerMixin",
+    "EntityPlayerMixin",
+    "GameSettingMixin",
+    "ItemMixin",
+    "ItemStackMixin",
+    "MinecraftMixin",
+    "ServerPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

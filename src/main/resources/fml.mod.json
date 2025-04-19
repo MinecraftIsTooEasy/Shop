@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "shop",
+  "version": "${version}",
+  "depends": {
+    "minecraft": "1.6.4-mite",
+    "fishmodloader": ">=3.4.1"
+  },
+  "environment": "*",
+  "name": "Shop",
+  "icon": "assets/Shop/Shop.png",
+  "description": "buy & sell",
+  "authors": [
+    "Wensc",
+    "Debris"
+  ],
+  "contributors": [
+    "Xy_Lose"
+  ],
+  "contact": {
+    "homepage": "https://github.com/MinecraftIsTooEasy/Shop",
+    "issues": "https://github.com/MinecraftIsTooEasy/Shop/issues"
+  },
+  "entrypoints": {
+    "main": [
+      "cn.wensc.mitemod.shop.ShopInit"
+    ]
+  },
+  "mixins": [
+    "shop.mixins.json"
+  ],
+  "accessWidener": "shop.accesswidener",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/ItemStack": [
+        "cn/wensc/mitemod/shop/api/ShopStack"
+      ]
+    }
+  }
+}

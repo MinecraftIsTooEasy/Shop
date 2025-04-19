@@ -1,0 +1,14 @@
+accessWidener v2 named
+accessible method net/minecraft/BlockFalling tryToFall (Lnet/minecraft/World;III)Z
+accessible class net/minecraft/SlotCreativeInventory
+accessible field net/minecraft/ShapedRecipes field_92101_f Z
+accessible field net/minecraft/ShapelessRecipes propagate_tag_compound Z
+extendable class net/minecraft/BlockLog
+extendable class net/minecraft/BlockLeaves
+accessible field net/minecraft/Material durability F
+accessible method net/minecraft/Block setResistance (F)Lnet/minecraft/Block;
+accessible method net/minecraft/Block setStepSound (Lnet/minecraft/StepSound;)Lnet/minecraft/Block;
+accessible method net/minecraft/BlockFire setBurnRate (III)V
+accessible method net/minecraft/EntityVillager adjustProbability (F)F
+accessible field net/minecraft/EntityVillager buyingList Lnet/minecraft/MerchantRecipeList;
+accessible field net/minecraft/EntityVillager field_82191_bN F
