@@ -30,7 +30,7 @@ repositories {
 loom {
 	accessWidenerPath = file("src/main/resources/shop.accesswidener")
 	mergedMinecraftJar()
-	setFML(new File("D:\\Projects\\IDEA\\Minecraft\\MITE\\FishModLoader-v3.4.1.jar"))
+	setFML(new File("${lib_dir}/${fish_mod_loader}"))
 	mods {
 		"Shop" {
 			sourceSet sourceSets.main
@@ -47,11 +47,11 @@ dependencies {
 	mappings loom.fmlMCPMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	implementation files("D:\\Projects\\IDEA\\Minecraft\\MITE\\RustedIronCore-1.3.9.jar")
-	implementation files("D:\\Projects\\IDEA\\Minecraft\\MITE\\RustedIronCore-1.3.9-source.jar")
-//	implementation files("D:\\Projects\\IDEA\\Minecraft\\MITE\\emi-1.1.21+1.6.4-MITE+fish.jar")
-	implementation files("D:\\Projects\\IDEA\\Minecraft\\MITE\\MITE-ITE-2.0.12-dev-20250417.jar")
-	implementation files("D:\\Projects\\IDEA\\Minecraft\\MITE\\Baubles.jar")
+	implementation files("${lib_dir}/RustedIronCore-1.3.9.jar")
+	implementation files("${lib_dir}/RustedIronCore-1.3.9-source.jar")
+//	implementation files("${lib_dir}/emi-1.1.21+1.6.4-MITE+fish.jar")
+	implementation files("${lib_dir}/MITE-ITE-2.0.12-dev-20250417.jar")
+	implementation files("${lib_dir}/Baubles.jar")
 	implementation("it.unimi.dsi:fastutil:8.5.12")
 	implementation files(loom.getFML().toPath())
 
