@@ -12,7 +12,6 @@ import net.xiaoyu233.fml.FishModLoader;
 
 public class ShopNetwork {
     public static final ResourceLocation OpenWindow = new ResourceLocation(ShopInit.ShopModID, "OpenWindow");
-    public static final ResourceLocation OverlayMessage = new ResourceLocation(ShopInit.ShopModID, "OverlayMessage");
     public static final ResourceLocation OpenShop = new ResourceLocation(ShopInit.ShopModID, "OpenShop");
     public static final ResourceLocation ShopIndex = new ResourceLocation(ShopInit.ShopModID, "ShopIndex");
     public static final ResourceLocation SyncShopInfo = new ResourceLocation(ShopInit.ShopModID, "SyncShopInfo");
