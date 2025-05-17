@@ -2,6 +2,7 @@ package cn.wensc.mitemod.shop.event;
 
 import cn.wensc.mitemod.shop.api.ShopPlayer;
 import cn.wensc.mitemod.shop.command.CommandPrice;
+import cn.wensc.mitemod.shop.command.CommandShop;
 import com.google.common.eventbus.Subscribe;
 import net.minecraft.*;
 import net.xiaoyu233.fml.reload.event.CommandRegisterEvent;
@@ -77,5 +78,6 @@ public class ShopEventFML {
     @Subscribe
     public void onCommandRegister(CommandRegisterEvent event) {
         event.register(new CommandPrice());
+        event.register(new CommandShop());
     }
 }
