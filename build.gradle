@@ -5,7 +5,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = project.mod_version
+version = project.version
 group = project.maven_group
 
 static def buildTime() {
@@ -60,7 +60,7 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
-	filesMatching("fml.fml.mod.json") {
+	filesMatching("fml.mod.json") {
 		expand "version": project.version
 	}
 }

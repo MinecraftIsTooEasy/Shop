@@ -6,7 +6,7 @@ import cn.wensc.mitemod.shop.api.ShopRegistry;
 import net.minecraft.Block;
 import net.minecraft.Item;
 
-public class ShopVanillaPlugin  implements ShopPlugin {
+public class ShopVanillaPlugin implements ShopPlugin {
     @Override
     public void register(ShopRegistry registry) {
         this.registerPrices(registry);
