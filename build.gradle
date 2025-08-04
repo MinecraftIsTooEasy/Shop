@@ -52,6 +52,7 @@ dependencies {
 //	implementation files("${lib_dir}/emi-1.1.21+1.6.4-MITE+fish.jar")
 	implementation files("${lib_dir}/MITE-ITE-2.0.12-dev-20250417.jar")
 	implementation files("${lib_dir}/Baubles.jar")
+	implementation files("${lib_dir}/ManyLib-2.2.3.jar")
 	implementation("it.unimi.dsi:fastutil:8.5.12")
 	implementation files(loom.getFML().toPath())
 

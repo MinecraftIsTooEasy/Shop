@@ -1,6 +1,5 @@
 package cn.wensc.mitemod.shop.util;
 
-import cn.wensc.mitemod.shop.ShopConfigs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

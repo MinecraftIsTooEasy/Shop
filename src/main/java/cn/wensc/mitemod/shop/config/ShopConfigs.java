@@ -1,4 +1,4 @@
-package cn.wensc.mitemod.shop;
+package cn.wensc.mitemod.shop.config;
 
 import cn.wensc.mitemod.shop.api.ShopItem;
 import cn.wensc.mitemod.shop.api.ShopStack;
@@ -70,7 +70,6 @@ public class ShopConfigs {
     }
 
     private static void setPriceFromFile(Item item, int sub, ItemStack itemStack, double soldPrice, double buyPrice) {
-//        if (!GAConfigManyLib.PriceConfigStrongOverride.getBooleanValue()) {
         double soldPriceFromMemory = ((ShopItem) item).getSoldPrice(sub);
         if (soldPrice == 0.0D && soldPriceFromMemory > 0.0D) {
             soldPrice = soldPriceFromMemory;
@@ -79,7 +78,6 @@ public class ShopConfigs {
         if (buyPrice == 0.0D && buyPriceFromMemory > 0.0D) {
             buyPrice = buyPriceFromMemory;
         }
-//        }
 
         PriceStacks.setPrice(itemStack, soldPrice, buyPrice);
     }

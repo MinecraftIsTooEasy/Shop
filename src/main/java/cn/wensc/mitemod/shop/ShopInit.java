@@ -1,8 +1,10 @@
 package cn.wensc.mitemod.shop;
 
+import cn.wensc.mitemod.shop.config.ShopConfigML;
 import cn.wensc.mitemod.shop.event.ShopEventFML;
 import cn.wensc.mitemod.shop.event.ShopPropertyRegistry;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
+import fi.dy.masa.malilib.config.ConfigManager;
 import moddedmite.rustedironcore.api.event.Handlers;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.KeyBinding;
@@ -19,5 +21,7 @@ public class ShopInit implements ModInitializer {
         MITEEvents.MITE_EVENT_BUS.register(new ShopEventFML());
         ShopNetwork.init();
         ModResourceManager.addResourcePackDomain(ShopModID);
+        ShopConfigML.getInstance().load();
+        ConfigManager.getInstance().registerConfig(ShopConfigML.getInstance());
     }
 }

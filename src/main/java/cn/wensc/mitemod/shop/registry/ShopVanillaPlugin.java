@@ -61,10 +61,10 @@ public class ShopVanillaPlugin implements ShopPlugin {
         ((ShopItem) Item.getItem(Block.pumpkin.blockID)).setSoldPriceForAllSubs(2.0D);
         ((ShopItem) Item.getItem(Block.dirt.blockID)).setSoldPriceForAllSubs(0.5D);
         ((ShopItem) Item.getItem(Block.sand.blockID)).setSoldPriceForAllSubs(0.5D);
-        ((ShopItem) Item.getItem(Block.cobblestone.blockID)).setSoldPriceForAllSubs(2.5D);
-        ((ShopItem) Item.getItem(Block.stone.blockID)).setSoldPriceForAllSubs(5.0D);
+        ((ShopItem) Item.getItem(Block.cobblestone.blockID)).setSoldPriceForAllSubs(1.0D);
+        ((ShopItem) Item.getItem(Block.stone.blockID)).setSoldPriceForAllSubs(1.0D);
         ((ShopItem) Item.getItem(Block.cobblestoneWall.blockID)).setSoldPriceForAllSubs(1.5D);
-        ((ShopItem) Item.getItem(Block.wood.blockID)).setSoldPriceForAllSubs(5.0D);
+        ((ShopItem) Item.getItem(Block.wood.blockID)).setSoldPriceForAllSubs(1.0D);
 
         ((ShopItem) Item.horseArmorMithril).setSoldPriceForAllSubs(250.0D);
         ((ShopItem) Item.horseArmorAdamantium).setSoldPriceForAllSubs(500.0D);

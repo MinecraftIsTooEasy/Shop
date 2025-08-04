@@ -1,6 +1,6 @@
 package cn.wensc.mitemod.shop.command;
 
-import cn.wensc.mitemod.shop.ShopConfigs;
+import cn.wensc.mitemod.shop.config.ShopConfigs;
 import cn.wensc.mitemod.shop.util.PriceStacks;
 import net.minecraft.ChatMessageComponent;
 import net.minecraft.CommandBase;

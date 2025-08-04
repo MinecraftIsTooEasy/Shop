@@ -1,6 +1,6 @@
 package cn.wensc.mitemod.shop.event;
 
-import cn.wensc.mitemod.shop.ShopConfigs;
+import cn.wensc.mitemod.shop.config.ShopConfigs;
 import cn.wensc.mitemod.shop.api.ShopPlugin;
 import cn.wensc.mitemod.shop.registry.ShopRegistryImpl;
 import cn.wensc.mitemod.shop.registry.ShopVanillaPlugin;

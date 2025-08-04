@@ -28,8 +28,8 @@ public class C2SShopIndex implements Packet {
     public void apply(EntityPlayer entityPlayer) {
         Container var16 = entityPlayer.openContainer;
         if (var16 instanceof ContainerShop) {
-            ((ContainerShop)var16).inventory.pageIndex = index;
-            ((ContainerShop)var16).inventory.initItemList();
+            ((ContainerShop) var16).inventory.pageIndex = index;
+            ((ContainerShop) var16).inventory.initItemList();
         }
     }
 
