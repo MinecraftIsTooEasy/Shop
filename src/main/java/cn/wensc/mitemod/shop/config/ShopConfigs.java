@@ -71,11 +71,11 @@ public class ShopConfigs {
 
     private static void setPriceFromFile(Item item, int sub, ItemStack itemStack, double soldPrice, double buyPrice) {
         double soldPriceFromMemory = ((ShopItem) item).getSoldPrice(sub);
-        if (soldPrice == 0.0D && soldPriceFromMemory > 0.0D) {
+        if (soldPrice < 0.0D && soldPriceFromMemory > 0.0D) {
             soldPrice = soldPriceFromMemory;
         }
         double buyPriceFromMemory = ((ShopItem) item).getBuyPrice(sub);
-        if (buyPrice == 0.0D && buyPriceFromMemory > 0.0D) {
+        if (buyPrice < 0.0D && buyPriceFromMemory > 0.0D) {
             buyPrice = buyPriceFromMemory;
         }
 
