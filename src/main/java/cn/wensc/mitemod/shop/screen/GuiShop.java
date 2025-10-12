@@ -56,9 +56,7 @@ public class GuiShop extends GuiContainer {
     private void pageDown() {
         if (!this.canPageDown()) return;
         this.pageIndex++;
-        if (this.pageIndex == (double) (PriceStacks.shopSize / InventoryShop.pageSize)) {
-            this.right.enabled = false;
-        }
+        if (this.pageIndex == (double) (PriceStacks.getShopSize() / InventoryShop.pageSize)) this.right.enabled = false;
         this.left.enabled = true;
         ShopNetwork.sendToServer(new C2SShopIndex(this.pageIndex));
     }
@@ -66,8 +64,7 @@ public class GuiShop extends GuiContainer {
     private void pageUp() {
         if (!this.canPageUp()) return;
         this.pageIndex--;
-        if (this.pageIndex == 0)
-            this.left.enabled = false;
+        if (this.pageIndex == 0) this.left.enabled = false;
         this.right.enabled = true;
         ShopNetwork.sendToServer(new C2SShopIndex(this.pageIndex));
     }
@@ -96,5 +93,13 @@ public class GuiShop extends GuiContainer {
         int var4 = (this.width - this.xSize) / 2;
         int var5 = (this.height - this.ySize) / 2;
         drawTexturedModalRect(var4, var5, 0, 0, this.xSize, this.ySize);
+    }
+
+    @Override
+    protected void keyTyped(char par1, int par2) {
+        if (par2 == ShopInit.keyBindShop.keyCode) {
+            this.mc.thePlayer.closeScreen();
+        }
+        super.keyTyped(par1, par2);
     }
 }

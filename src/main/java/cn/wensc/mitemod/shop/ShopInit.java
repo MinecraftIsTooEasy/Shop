@@ -2,22 +2,24 @@ package cn.wensc.mitemod.shop;
 
 import cn.wensc.mitemod.shop.config.ShopConfigML;
 import cn.wensc.mitemod.shop.event.ShopEventFML;
-import cn.wensc.mitemod.shop.event.ShopPropertyRegistry;
+import cn.wensc.mitemod.shop.event.ShopEventRIC;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
 import fi.dy.masa.malilib.config.ConfigManager;
-import moddedmite.rustedironcore.api.event.Handlers;
+import moddedmite.rustedironcore.api.util.LogUtil;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.KeyBinding;
 import net.xiaoyu233.fml.ModResourceManager;
 import net.xiaoyu233.fml.reload.event.MITEEvents;
+import org.apache.logging.log4j.Logger;
 
 public class ShopInit implements ModInitializer {
     public static String ShopModID = "shop";
     public static KeyBinding keyBindShop;
+    public static final Logger LOGGER = LogUtil.getLogger();
 
     @Override
     public void onInitialize() {
-        Handlers.PropertiesRegistry.register(new ShopPropertyRegistry());
+        ShopEventRIC.register();
         MITEEvents.MITE_EVENT_BUS.register(new ShopEventFML());
         ShopNetwork.init();
         ModResourceManager.addResourcePackDomain(ShopModID);

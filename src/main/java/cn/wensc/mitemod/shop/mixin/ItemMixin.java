@@ -13,11 +13,16 @@ import java.util.Map;
 
 @Mixin(Item.class)
 public abstract class ItemMixin implements ShopItem {
-    @Shadow public abstract boolean getHasSubtypes();
-    @Shadow public abstract List getSubItems();
+    @Shadow
+    public abstract boolean getHasSubtypes();
 
-    @Unique private final Map<Integer, Double> soldPriceArray = new HashMap<>();
-    @Unique private final Map<Integer, Double> buyPriceArray = new HashMap<>();
+    @Shadow
+    public abstract List getSubItems();
+
+    @Unique
+    private final Map<Integer, Double> soldPriceArray = new HashMap<>();
+    @Unique
+    private final Map<Integer, Double> buyPriceArray = new HashMap<>();
 
     @Override
     public double getSoldPrice(int subtype) {
@@ -75,5 +80,11 @@ public abstract class ItemMixin implements ShopItem {
             this.soldPriceArray.put(0, price);
         }
         return this;
+    }
+
+    @Override
+    public void clearPrice() {
+        this.soldPriceArray.clear();
+        this.buyPriceArray.clear();
     }
 }

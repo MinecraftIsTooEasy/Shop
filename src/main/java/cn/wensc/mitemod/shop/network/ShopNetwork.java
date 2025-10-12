@@ -1,8 +1,12 @@
 package cn.wensc.mitemod.shop.network;
 
 import cn.wensc.mitemod.shop.ShopInit;
-import cn.wensc.mitemod.shop.network.packets.C2S.*;
-import cn.wensc.mitemod.shop.network.packets.S2C.*;
+import cn.wensc.mitemod.shop.network.packets.C2S.C2SOpenShop;
+import cn.wensc.mitemod.shop.network.packets.C2S.C2SShopIndex;
+import cn.wensc.mitemod.shop.network.packets.S2C.S2COpenWindow;
+import cn.wensc.mitemod.shop.network.packets.S2C.S2CSyncMoney;
+import cn.wensc.mitemod.shop.network.packets.S2C.S2CSyncPrice;
+import cn.wensc.mitemod.shop.network.packets.S2C.S2CSyncShopInfo;
 import moddedmite.rustedironcore.network.Network;
 import moddedmite.rustedironcore.network.Packet;
 import moddedmite.rustedironcore.network.PacketReader;
@@ -16,6 +20,7 @@ public class ShopNetwork {
     public static final ResourceLocation ShopIndex = new ResourceLocation(ShopInit.ShopModID, "ShopIndex");
     public static final ResourceLocation SyncShopInfo = new ResourceLocation(ShopInit.ShopModID, "SyncShopInfo");
     public static final ResourceLocation SyncMoney = new ResourceLocation(ShopInit.ShopModID, "SyncMoney");
+    public static final ResourceLocation SyncPrice = new ResourceLocation(ShopInit.ShopModID, "SyncPrice");
 
     public static void sendToClient(ServerPlayer player, Packet packet) {
         Network.sendToClient(player, packet);
@@ -36,6 +41,7 @@ public class ShopNetwork {
         PacketReader.registerClientPacketReader(ShopNetwork.OpenWindow, S2COpenWindow::new);
         PacketReader.registerClientPacketReader(ShopNetwork.SyncShopInfo, S2CSyncShopInfo::new);
         PacketReader.registerClientPacketReader(ShopNetwork.SyncMoney, S2CSyncMoney::new);
+        PacketReader.registerClientPacketReader(ShopNetwork.SyncPrice, S2CSyncPrice::new);
     }
 
     private static void initServer() {

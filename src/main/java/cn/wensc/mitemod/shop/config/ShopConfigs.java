@@ -2,10 +2,10 @@ package cn.wensc.mitemod.shop.config;
 
 import cn.wensc.mitemod.shop.api.ShopItem;
 import cn.wensc.mitemod.shop.api.ShopStack;
-import cn.wensc.mitemod.shop.util.FileUtil;
-import cn.wensc.mitemod.shop.util.ItemUtil;
-import cn.wensc.mitemod.shop.util.PriceStacks;
+import cn.wensc.mitemod.shop.util.*;
 import moddedmite.rustedironcore.api.util.LogUtil;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.Item;
 import net.minecraft.ItemStack;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 public class ShopConfigs {
@@ -31,12 +32,10 @@ public class ShopConfigs {
         try {
             FileWriter appender = new FileWriter(file_mite, true);
             for (Item item : Item.itemsList) {
-                if (ItemUtil.canTrade(item)) {
-                    for (ItemStack itemStack : ItemUtil.createVariants(item)) {
-                        if (!loadPrice(properties, item, itemStack)) {
-                            appendPriceLine(appender, item, itemStack);
-                        }
-                    }
+                if (!ItemUtil.canTrade(item)) continue;
+                for (ItemStack itemStack : ItemUtil.createVariants(item)) {
+                    boolean exist = loadPrice(properties, item, itemStack);
+                    if (!exist) appendPriceLine(appender, itemStack);
                 }
             }
             appender.close();
@@ -44,7 +43,6 @@ public class ShopConfigs {
             LOGGER.warn("error reading shop config", e);
         } finally {
             PriceStacks.endLoading();
-            PriceStacks.sortList();
         }
     }
 
@@ -57,38 +55,30 @@ public class ShopConfigs {
             name = itemStack.getUnlocalizedName() + "$" + itemStack.itemID;
         }
         String itemPrice = (String) properties.get(name);
-        if (itemPrice != null) {
-            String[] soldPriceAndBuyPrice = itemPrice.split(",");
-            if (soldPriceAndBuyPrice.length == 2) {
-                setPriceFromFile(item, sub, itemStack, Double.parseDouble(soldPriceAndBuyPrice[0]), Double.parseDouble(soldPriceAndBuyPrice[1]));
-            } else {
-                setPriceFromFile(item, sub, itemStack, Double.parseDouble(soldPriceAndBuyPrice[0]), 0.0D);
-            }
-            return true;
-        }
-        return false;
-    }
+        if (itemPrice == null) return false;
 
-    private static void setPriceFromFile(Item item, int sub, ItemStack itemStack, double soldPrice, double buyPrice) {
-        double soldPriceFromMemory = ((ShopItem) item).getSoldPrice(sub);
-        if (soldPrice < 0.0D && soldPriceFromMemory > 0.0D) {
-            soldPrice = soldPriceFromMemory;
-        }
-        double buyPriceFromMemory = ((ShopItem) item).getBuyPrice(sub);
-        if (buyPrice < 0.0D && buyPriceFromMemory > 0.0D) {
-            buyPrice = buyPriceFromMemory;
+        String[] soldPriceAndBuyPrice = itemPrice.split(",");
+
+        double soldPrice, buyPrice;
+        if (soldPriceAndBuyPrice.length == 2) {
+            soldPrice = Double.parseDouble(soldPriceAndBuyPrice[0]);
+            buyPrice = Double.parseDouble(soldPriceAndBuyPrice[1]);
+        } else {
+            soldPrice = Double.parseDouble(soldPriceAndBuyPrice[0]);
+            buyPrice = 0.0D;
         }
 
         PriceStacks.setPrice(itemStack, soldPrice, buyPrice);
+        return true;
     }
 
-    public static void appendPriceLine(FileWriter fileWriter, Item item, ItemStack itemStack) throws IOException {
+    public static void appendPriceLine(FileWriter fileWriter, ItemStack itemStack) throws IOException {
+        Item item = itemStack.getItem();
         int sub = itemStack.getItemSubtype();
         double soldPrice = ((ShopItem) item).getSoldPrice(sub);
         double buyPrice = ((ShopItem) item).getBuyPrice(sub);
         ((ShopStack) itemStack).setPrice(soldPrice, buyPrice);
-        if (soldPrice > 0.0D || buyPrice > 0.0D)
-            PriceStacks.addStack(itemStack);
+        if (soldPrice > 0.0D || buyPrice > 0.0D) PriceStacks.addStack(itemStack);
         if (item.getHasSubtypes()) {
             fileWriter.write("// " + itemStack.getDisplayName() + " ID: " + itemStack.itemID + " meta:" + sub + "\n");
             fileWriter.write(itemStack.getUnlocalizedName() + "$" + item.itemID + "$" + sub + "=" + soldPrice + "," + buyPrice + "\n\n");
@@ -104,31 +94,9 @@ public class ShopConfigs {
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.write("// 商店配置文件，说明：参数之间使用英文逗号分隔，请严格遵循格式（商品英文名=售出价格,购买价格），价格小于等于0代表不可出售或者不可购买，价格可以为小数，乱改造成无法启动概不负责\n");
             for (Item item : Item.itemsList) {
-                if (ItemUtil.canTrade(item)) {
-                    for (ItemStack itemStack : ItemUtil.createVariants(item)) {
-                        appendPriceLine(fileWriter, item, itemStack);
-                    }
-                }
-            }
-            fileWriter.close();
-        } catch (IOException e) {
-            LOGGER.warn("error while generating shop config file", e);
-        } finally {
-            PriceStacks.sortList();
-        }
-        PriceStacks.endLoading();
-    }
-
-    public static void saveShopConfigFile(File file) {
-        PriceStacks.beginLoading();
-        try {
-            FileWriter fileWriter = new FileWriter(file);
-            fileWriter.write("// 商店配置文件，说明：参数之间使用英文逗号分隔，请严格遵循格式（商品英文名=售出价格,购买价格），价格小于等于0代表不可出售或者不可购买，价格可以为小数，乱改造成无法启动概不负责\n");
-            for (Item item : Item.itemsList) {
-                if (ItemUtil.canTrade(item)) {
-                    for (ItemStack itemStack : ItemUtil.createVariants(item)) {
-                        appendPriceLine(fileWriter, item, itemStack);
-                    }
+                if (!ItemUtil.canTrade(item)) continue;
+                for (ItemStack itemStack : ItemUtil.createVariants(item)) {
+                    appendPriceLine(fileWriter, itemStack);
                 }
             }
             fileWriter.close();
@@ -136,8 +104,24 @@ public class ShopConfigs {
             LOGGER.warn("error while generating shop config file", e);
         } finally {
             PriceStacks.endLoading();
-            PriceStacks.sortList();
         }
     }
 
+    public static void saveShopConfigFile(File file) {
+        generateShopConfigFile(file);// found no difference
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void overrideItemPrice(Map<EigenItemStack, PriceItem> map) {
+        for (Item item : Item.itemsList) {
+            if (!ItemUtil.canTrade(item)) continue;
+            ((ShopItem) item).clearPrice();
+        }
+        map.forEach((eigenItemStack, priceItem) -> {
+            Item item = eigenItemStack.item();
+            int subtype = eigenItemStack.subtype();
+            ShopItem.setBuyPrice(item, subtype, priceItem.buyPrice());
+            ShopItem.setSoldPrice(item, subtype, priceItem.soldPrice());
+        });
+    }
 }

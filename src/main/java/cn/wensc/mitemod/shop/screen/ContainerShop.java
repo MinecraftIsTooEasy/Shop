@@ -1,9 +1,10 @@
 package cn.wensc.mitemod.shop.screen;
 
+import cn.wensc.mitemod.shop.api.ShopItem;
 import cn.wensc.mitemod.shop.api.ShopPlayer;
 import cn.wensc.mitemod.shop.api.ShopStack;
 import cn.wensc.mitemod.shop.manager.MoneyManager;
-import cn.wensc.mitemod.shop.util.PriceStacks;
+import cn.wensc.mitemod.shop.util.PriceItem;
 import net.minecraft.*;
 
 import java.util.ArrayList;
@@ -38,20 +39,54 @@ public class ContainerShop extends Container {
     }
 
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int slotIndex) {
-        Slot slot;
-        if (slotIndex >= 45 && (slot = (Slot) this.inventorySlots.get(slotIndex)) != null && slot.getHasStack()) {
-            ItemStack stack = slot.getStack();
-            PriceStacks.matchItemStack(stack).ifPresent(template -> {
-                double soldPrice = ShopStack.getPrice(template).soldPrice();
-                if (soldPrice > 0.0D) {
-                    double totalMoney = stack.stackSize * soldPrice;
-                    MoneyManager moneyManager = ShopPlayer.getMoneyManager(this.player);
-                    moneyManager.addMoneyWithSimplify(totalMoney);
-                    slot.putStack(null);
-                }
-            });
-        }// selling item to the shop
+        Slot slot = (Slot) this.inventorySlots.get(slotIndex);
+        if (slot == null) return null;
+        if (!slot.getHasStack()) return null;
+        if (slotIndex < 45) {
+            handleBuyStack(slot);
+            return null;
+        }
+        handleSellStack(slot);
         return null;
+    }
+
+    private void handleSellStack(Slot slot) {
+        ItemStack stack = slot.getStack();
+        double soldPrice = ShopItem.getSoldPrice(stack);
+        if (soldPrice > 0.0D) {
+            double totalMoney = stack.stackSize * soldPrice;
+            MoneyManager moneyManager = ShopPlayer.getMoneyManager(this.player);
+            moneyManager.addMoneyWithSimplify(totalMoney);
+            slot.putStack(null);
+        }
+    }
+
+    private void handleBuyStack(Slot slot) {
+        MoneyManager moneyManager = ShopPlayer.getMoneyManager(player);
+        ItemStack template = slot.getStack().copy();
+        PriceItem price = ((ShopStack) template).getPrice();
+        final double buyPrice = price.buyPrice();
+
+        if (buyPrice <= 0.0D) {
+            this.notify(player, "商店不支持购买此商品");
+            return;
+        }
+
+        double totalMoney = template.getMaxStackSize() * buyPrice;
+        if (moneyManager.getMoney() >= totalMoney) {
+            player.inventory.addItemStackToInventoryOrDropIt(new ItemStack(template.itemID, template.getMaxStackSize(), template.getItemSubtype()));
+            moneyManager.subMoneyWithSimplify(totalMoney);
+        } else {
+            int maxStackSize = (int) Math.floor(moneyManager.getMoney() / buyPrice);
+            if (maxStackSize > 0) {
+                totalMoney = maxStackSize * buyPrice;
+                moneyManager.subMoneyWithSimplify(totalMoney);
+                template.setStackSize(maxStackSize);
+                player.inventory.addItemStackToInventoryOrDropIt(template);
+            } else {
+                this.notify(player, "余额不足");
+            }
+        }
     }
 
     public void updatePlayerInventory(EntityPlayer player) {
@@ -59,5 +94,11 @@ public class ContainerShop extends Container {
         for (int index = 0; index < player.openContainer.inventorySlots.size(); index++)
             itemList.add(((Slot) player.openContainer.inventorySlots.get(index)).getStack());
         ((ServerPlayer) player).sendContainerAndContentsToPlayer(player.openContainer, itemList);
+    }
+
+    private void notify(EntityPlayer player, String message) {
+        if (player.onServer()) {
+            player.addChatMessage(message);
+        }
     }
 }

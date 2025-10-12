@@ -1,7 +1,6 @@
 package cn.wensc.mitemod.shop.command;
 
 import cn.wensc.mitemod.shop.config.ShopConfigs;
-import cn.wensc.mitemod.shop.util.PriceStacks;
 import net.minecraft.ChatMessageComponent;
 import net.minecraft.CommandBase;
 import net.minecraft.ICommandSender;
@@ -12,7 +11,6 @@ import java.util.List;
 public class CommandShop extends CommandBase {
     private static final String RELOAD = "reload";
     private static final String SAVE = "save";
-    private static final String SORT = "sort";
 
     @Override
     public String getCommandName() {
@@ -34,10 +32,6 @@ public class CommandShop extends CommandBase {
                 ShopConfigs.loadOrCreate();
                 iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromText("重载成功"));
             }
-            case SORT -> {
-                PriceStacks.sortList();
-                iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromText("排序成功"));
-            }
             case SAVE -> {
                 ShopConfigs.saveShopConfigFile(ShopConfigs.ShopConfigFile);
                 iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromText("保存成功"));
@@ -50,7 +44,7 @@ public class CommandShop extends CommandBase {
     public List addTabCompletionOptions(ICommandSender iCommandSender, String[] params) {
         int length = params.length;
         if (length == 1) {
-            return getListOfStringsMatchingLastWord(params, RELOAD, SORT, SAVE);
+            return getListOfStringsMatchingLastWord(params, RELOAD, SAVE);
         }
         return null;
     }

@@ -6,12 +6,12 @@
   "minVersion": "0.8.3",
   "mixins": [
     "ClientPlayerMixin",
+    "ContainerMixin",
     "EntityPlayerMixin",
     "GameSettingMixin",
     "GuiContainerCreativeMixin",
     "ItemMixin",
     "ItemStackMixin",
-    "MinecraftMixin",
     "ServerPlayerMixin"
   ],
   "injectors": {

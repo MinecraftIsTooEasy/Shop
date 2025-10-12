@@ -26,7 +26,7 @@ public abstract class ServerPlayerMixin extends EntityPlayer implements ICraftin
         this.openContainer = new ContainerShop(this);
         this.openContainer.windowId = this.currentWindowId;
         this.openContainer.addCraftingToCrafters(this);
-        ShopNetwork.sendToClient(this.getAsEntityPlayerMP(), new S2CSyncShopInfo(PriceStacks.getStackListSize(), ShopPlayer.getMoneyManager(this).getMoney()));
+        ShopNetwork.sendToClient(this.getAsEntityPlayerMP(), new S2CSyncShopInfo(PriceStacks.getMerchandiseSize(), ShopPlayer.getMoneyManager(this).getMoney()));
     }
 
     @Shadow

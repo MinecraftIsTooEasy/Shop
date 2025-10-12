@@ -11,13 +11,12 @@ import fi.dy.masa.malilib.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 
 public class ShopConfigML extends SimpleConfigs {
     public static final ConfigBoolean EditMode = new ConfigBoolean("shop.EditMode", false);
+    public static final ConfigBoolean SyncPrice = new ConfigBoolean("shop.SyncPrice", true);
 
     private static final ShopConfigML Instance;
-    public static final List<ConfigBase<?>> configValues;
     public static final List<ConfigBase<?>> general;
 
     public static final List<ConfigTab> tabs = new ArrayList<>();
@@ -27,9 +26,7 @@ public class ShopConfigML extends SimpleConfigs {
     }
 
     static {
-        general = List.of(EditMode);
-        configValues = new ArrayList<>();
-        configValues.addAll(general);
+        general = List.of(EditMode, SyncPrice);
         tabs.add(new ConfigTab("shop.general", general));
         Instance = new ShopConfigML();
     }

@@ -1,20 +1,23 @@
 package cn.wensc.mitemod.shop.event;
 
-import cn.wensc.mitemod.shop.config.ShopConfigs;
 import cn.wensc.mitemod.shop.api.ShopPlugin;
+import cn.wensc.mitemod.shop.config.ShopConfigs;
 import cn.wensc.mitemod.shop.registry.ShopRegistryImpl;
 import cn.wensc.mitemod.shop.registry.ShopVanillaPlugin;
 import net.xiaoyu233.fml.FishModLoader;
 
-public class ShopPropertyRegistry implements Runnable {
-    @Override
-    public void run() {
-        ShopRegistryImpl gaRegistry = new ShopRegistryImpl();
-        new ShopVanillaPlugin().register(gaRegistry);
+public class ShopPropertyRegistry {
+    private static boolean initialized = false;
+
+    public static void run() {
+        if (initialized) return;
+        ShopRegistryImpl registry = new ShopRegistryImpl();
+        new ShopVanillaPlugin().register(registry);
         FishModLoader.getEntrypointContainers("shop", ShopPlugin.class)
-                .forEach(container -> container.getEntrypoint().register(gaRegistry));
+                .forEach(container -> container.getEntrypoint().register(registry));
 
         postRegisterPrice();
+        initialized = true;
     }
 
     public static void postRegisterPrice() {
