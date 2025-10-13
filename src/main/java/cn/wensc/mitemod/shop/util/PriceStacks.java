@@ -40,6 +40,9 @@ public class PriceStacks {
         return loadingFlag;
     }
 
+    /**
+     * Only used on loading
+     */
     public static void setPrice(ItemStack itemStack, double soldPrice, double buyPrice) {
         Item item = itemStack.getItem();
         int sub = itemStack.getItemSubtype();
@@ -47,11 +50,11 @@ public class PriceStacks {
         ((ShopItem) item).setBuyPrice(sub, buyPrice);
         ShopStack.setPrice(itemStack, soldPrice, buyPrice);
         if (soldPrice > 0.0D || buyPrice > 0.0D) {
-            PriceStacks.addStack(itemStack);
+            addDirtyStack(itemStack);
         }
     }
 
-    public static void addStack(ItemStack itemStack) {
+    public static void addDirtyStack(ItemStack itemStack) {
         if (isLoading()) {
             dirtyPriceStackList.add(itemStack);
         } else {
@@ -82,7 +85,7 @@ public class PriceStacks {
         return merchandise.subList(from, to);
     }
 
-    public static void handlePriceCommand(ItemStack itemStack, double soldPrice, double buyPrice) {
+    public static void handleNewPrice(ItemStack itemStack, double soldPrice, double buyPrice) {
         Optional<ItemStack> current = matchItemStack(itemStack);
         current.ifPresent(dirtyPriceStackList::remove);
         beginLoading();

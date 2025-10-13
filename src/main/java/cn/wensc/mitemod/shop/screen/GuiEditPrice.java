@@ -1,5 +1,6 @@
 package cn.wensc.mitemod.shop.screen;
 
+import cn.wensc.mitemod.shop.api.ShopApi;
 import cn.wensc.mitemod.shop.api.ShopStack;
 import net.minecraft.*;
 import org.lwjgl.input.Keyboard;
@@ -36,8 +37,8 @@ public class GuiEditPrice extends GuiScreen {
 
     protected void actionPerformed(GuiButton par1GuiButton) {
         if (par1GuiButton.enabled) {
-             if (par1GuiButton.id == 1) {
-                ((ShopStack) this.editStack).setPrice(Double.parseDouble(this.theGuiTextField.getText().trim()), 0);
+            if (par1GuiButton.id == 1) {
+                ShopApi.setPrice(this.editStack, this.parseSoldPrice(), 0);
                 System.out.println(((ShopStack) this.editStack).getPrice());
                 this.mc.displayGuiScreen(this.parentGuiScreen);
             }
@@ -62,5 +63,13 @@ public class GuiEditPrice extends GuiScreen {
         this.drawDefaultBackground();
         this.theGuiTextField.drawTextBox();
         super.drawScreen(par1, par2, par3);
+    }
+
+    private double parseSoldPrice() {
+        try {
+            return Double.parseDouble(this.theGuiTextField.getText().trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

@@ -1,6 +1,6 @@
 package cn.wensc.mitemod.shop.screen;
 
-import cn.wensc.mitemod.shop.api.ShopItem;
+import cn.wensc.mitemod.shop.api.ShopApi;
 import cn.wensc.mitemod.shop.api.ShopPlayer;
 import cn.wensc.mitemod.shop.api.ShopStack;
 import cn.wensc.mitemod.shop.manager.MoneyManager;
@@ -52,7 +52,7 @@ public class ContainerShop extends Container {
 
     private void handleSellStack(Slot slot) {
         ItemStack stack = slot.getStack();
-        double soldPrice = ShopItem.getSoldPrice(stack);
+        double soldPrice = ShopApi.getSoldPrice(stack);
         if (soldPrice > 0.0D) {
             double totalMoney = stack.stackSize * soldPrice;
             MoneyManager moneyManager = ShopPlayer.getMoneyManager(this.player);

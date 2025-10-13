@@ -22,4 +22,8 @@ public class ItemUtil {
         if (item instanceof ItemMap) return false;
         return true;
     }
+
+    public static boolean canNotTrade(Item item) {
+        return !canTrade(item);
+    }
 }

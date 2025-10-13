@@ -1,6 +1,6 @@
 package cn.wensc.mitemod.shop.mixin;
 
-import cn.wensc.mitemod.shop.api.ShopItem;
+import cn.wensc.mitemod.shop.api.ShopApi;
 import cn.wensc.mitemod.shop.api.ShopStack;
 import cn.wensc.mitemod.shop.screen.SlotShop;
 import cn.wensc.mitemod.shop.util.PriceItem;
@@ -29,15 +29,15 @@ public abstract class ItemStackMixin implements ShopStack {
         List<String> list = callbackInfoReturnable.getReturnValue();
 
         if (slot instanceof SlotShop && slot.getHasStack()) {
-            PriceItem price = ShopStack.getPrice(slot.getStack());
+            PriceItem price = ShopApi.getCustomPrice(slot.getStack());
             addPriceTooltip(price.soldPrice(), price.buyPrice(), list);
             return;
         }
 
         if (detailed) {
             ItemStack cast = (ItemStack) (Object) this;
-            double soldPrice = ShopItem.getSoldPrice(cast);
-            double buyPrice = ShopItem.getBuyPrice(cast);
+            double soldPrice = ShopApi.getSoldPrice(cast);
+            double buyPrice = ShopApi.getBuyPrice(cast);
             if (soldPrice > 0.0D || buyPrice > 0.0D) addPriceTooltip(soldPrice, buyPrice, list);
         }
     }

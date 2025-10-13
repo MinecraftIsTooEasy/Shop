@@ -33,7 +33,7 @@ public class CommandShop extends CommandBase {
                 iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromText("重载成功"));
             }
             case SAVE -> {
-                ShopConfigs.saveShopConfigFile(ShopConfigs.ShopConfigFile);
+                ShopConfigs.saveToFile(ShopConfigs.ShopConfigFile);
                 iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromText("保存成功"));
             }
             default -> throw new WrongUsageException(getCommandUsage(iCommandSender));

@@ -19,12 +19,12 @@ import java.util.Properties;
 public class ShopConfigs {
     private static final Logger LOGGER = LogUtil.getLogger();
 
-    public static final String shopConfigFilePath = "config" + File.separator + "shop.cfg";
+    public static final String ShopConfigFilePath = "config" + File.separator + "shop.cfg";
 
-    public static final File ShopConfigFile = new File(shopConfigFilePath);
+    public static final File ShopConfigFile = new File(ShopConfigFilePath);
 
     public static void loadOrCreate() {
-        FileUtil.loadOrCreateFile(ShopConfigs.ShopConfigFile, ShopConfigs::readAndAppendMissing, ShopConfigs::generateShopConfigFile);
+        FileUtil.loadOrCreateFile(ShopConfigs.ShopConfigFile, ShopConfigs::readAndAppendMissing, ShopConfigs::generateFile);
     }
 
     public static void readAndAppendMissing(File file_mite, Properties properties) {
@@ -32,7 +32,7 @@ public class ShopConfigs {
         try {
             FileWriter appender = new FileWriter(file_mite, true);
             for (Item item : Item.itemsList) {
-                if (!ItemUtil.canTrade(item)) continue;
+                if (ItemUtil.canNotTrade(item)) continue;
                 for (ItemStack itemStack : ItemUtil.createVariants(item)) {
                     boolean exist = loadPrice(properties, item, itemStack);
                     if (!exist) appendPriceLine(appender, itemStack);
@@ -78,7 +78,7 @@ public class ShopConfigs {
         double soldPrice = ((ShopItem) item).getSoldPrice(sub);
         double buyPrice = ((ShopItem) item).getBuyPrice(sub);
         ((ShopStack) itemStack).setPrice(soldPrice, buyPrice);
-        if (soldPrice > 0.0D || buyPrice > 0.0D) PriceStacks.addStack(itemStack);
+        if (soldPrice > 0.0D || buyPrice > 0.0D) PriceStacks.addDirtyStack(itemStack);
         if (item.getHasSubtypes()) {
             fileWriter.write("// " + itemStack.getDisplayName() + " ID: " + itemStack.itemID + " meta:" + sub + "\n");
             fileWriter.write(itemStack.getUnlocalizedName() + "$" + item.itemID + "$" + sub + "=" + soldPrice + "," + buyPrice + "\n\n");
@@ -88,13 +88,13 @@ public class ShopConfigs {
         }
     }
 
-    public static void generateShopConfigFile(File file) {
+    public static void generateFile(File file) {
         PriceStacks.beginLoading();
         try {
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.write("// 商店配置文件，说明：参数之间使用英文逗号分隔，请严格遵循格式（商品英文名=售出价格,购买价格），价格小于等于0代表不可出售或者不可购买，价格可以为小数，乱改造成无法启动概不负责\n");
             for (Item item : Item.itemsList) {
-                if (!ItemUtil.canTrade(item)) continue;
+                if (ItemUtil.canNotTrade(item)) continue;
                 for (ItemStack itemStack : ItemUtil.createVariants(item)) {
                     appendPriceLine(fileWriter, itemStack);
                 }
@@ -107,14 +107,14 @@ public class ShopConfigs {
         }
     }
 
-    public static void saveShopConfigFile(File file) {
-        generateShopConfigFile(file);// found no difference
+    public static void saveToFile(File file) {
+        generateFile(file);// found no difference
     }
 
     @Environment(EnvType.CLIENT)
     public static void overrideItemPrice(Map<EigenItemStack, PriceItem> map) {
         for (Item item : Item.itemsList) {
-            if (!ItemUtil.canTrade(item)) continue;
+            if (ItemUtil.canNotTrade(item)) continue;
             ((ShopItem) item).clearPrice();
         }
         map.forEach((eigenItemStack, priceItem) -> {
