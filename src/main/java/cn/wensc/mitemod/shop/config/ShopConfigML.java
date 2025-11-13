@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShopConfigML extends SimpleConfigs {
-    public static final ConfigBoolean EditMode = new ConfigBoolean("shop.EditMode", false);
+    public static final ConfigBoolean EditMode = new ConfigBoolean("shop.EditMode", true);
     public static final ConfigBoolean SyncPrice = new ConfigBoolean("shop.SyncPrice", true);
 
     private static final ShopConfigML Instance;

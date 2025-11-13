@@ -8,7 +8,6 @@
     "ClientPlayerMixin",
     "ContainerMixin",
     "EntityPlayerMixin",
-    "GameSettingMixin",
     "GuiContainerCreativeMixin",
     "ItemMixin",
     "ItemStackMixin",

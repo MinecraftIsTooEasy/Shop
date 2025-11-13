@@ -2,10 +2,13 @@ package cn.wensc.mitemod.shop.screen;
 
 import cn.wensc.mitemod.shop.ShopInit;
 import cn.wensc.mitemod.shop.api.ShopPlayer;
+import cn.wensc.mitemod.shop.config.ShopConfigML;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
 import cn.wensc.mitemod.shop.network.packets.C2S.C2SShopIndex;
 import cn.wensc.mitemod.shop.util.PriceStacks;
 import net.minecraft.*;
+import net.xiaoyu233.fml.util.ReflectHelper;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -101,5 +104,18 @@ public class GuiShop extends GuiContainer {
             this.mc.thePlayer.closeScreen();
         }
         super.keyTyped(par1, par2);
+    }
+
+    @Override
+    protected void handleMouseClick(Slot slotIn, int slotId, int clickedButton, int clickType) {
+        if (ShopConfigML.EditMode.getBooleanValue() && slotIn != null) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LMENU/* left Alt */) && clickedButton == 1) {
+                if (slotIn.getHasStack()) {
+                    ItemStack stack = slotIn.getStack().copy();
+                    this.mc.displayGuiScreen(new GuiEditPrice(this, stack));
+                }
+            }
+        }
+        super.handleMouseClick(slotIn, slotId, clickedButton, clickType);
     }
 }

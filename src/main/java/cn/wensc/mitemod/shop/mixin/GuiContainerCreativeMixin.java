@@ -1,6 +1,5 @@
 package cn.wensc.mitemod.shop.mixin;
 
-import cn.wensc.mitemod.shop.api.ShopStack;
 import cn.wensc.mitemod.shop.config.ShopConfigML;
 import cn.wensc.mitemod.shop.screen.GuiEditPrice;
 import net.minecraft.*;
@@ -21,7 +20,6 @@ public abstract class GuiContainerCreativeMixin extends InventoryEffectRenderer 
     private void handleMouseClick(Slot slotIn, int slotId, int clickedButton, int clickType, CallbackInfo ci) {
         if (ShopConfigML.EditMode.getBooleanValue() && slotIn != null) {
             if (Keyboard.isKeyDown(Keyboard.KEY_LMENU/* left Alt */) && clickedButton == 1) {
-                InventoryPlayer inventory = this.mc.thePlayer.inventory;
                 if (slotIn.getHasStack()) {
                     ItemStack stack = slotIn.getStack().copy();
                     this.mc.displayGuiScreen(new GuiEditPrice(ReflectHelper.dyCast(this), stack));

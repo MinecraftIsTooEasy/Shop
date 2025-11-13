@@ -1,16 +1,22 @@
 package cn.wensc.mitemod.shop.screen;
 
 import cn.wensc.mitemod.shop.api.ShopApi;
+import cn.wensc.mitemod.shop.api.ShopItem;
 import cn.wensc.mitemod.shop.api.ShopStack;
+import cn.wensc.mitemod.shop.config.ShopConfigs;
 import net.minecraft.*;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import java.awt.*;
 
 public class GuiEditPrice extends GuiScreen {
-    private ItemStack editStack;
-    private static RenderItem itemRenderer = new RenderItem();
-    private Minecraft client = Minecraft.getMinecraft();
-    private GuiTextField theGuiTextField;
-    private GuiScreen parentGuiScreen;
+    private final ItemStack editStack;
+    private static final RenderItem itemRenderer = new RenderItem();
+    private GuiTextField soldPriceTextField;
+    private GuiTextField buyPriceTextField;
+    private final GuiScreen parentGuiScreen;
 
     public GuiEditPrice(GuiScreen parentGuiScreen, ItemStack editStack) {
         this.parentGuiScreen = parentGuiScreen;
@@ -21,14 +27,15 @@ public class GuiEditPrice extends GuiScreen {
         Keyboard.enableRepeatEvents(true);
         this.buttonList.clear();
         this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, I18n.getString("gui.done")));
-        this.theGuiTextField = new GuiTextField(this.fontRenderer, this.width / 2 - 100, 60, 200, 20);
-        this.theGuiTextField.setFocused(true);
-        this.theGuiTextField.setText("售价");
-        itemRenderer.renderItemOverlayIntoGUI(client.fontRenderer, client.getTextureManager(), this.editStack, this.width / 2, this.height / 2);
+        this.soldPriceTextField = new GuiTextField(this.fontRenderer, this.width / 2 - 100, this.height / 2 - 20, 200, 20);
+        this.soldPriceTextField.setText(String.valueOf(((ShopItem) this.editStack.getItem()).getSoldPrice(this.editStack.getItemSubtype())));
+        this.buyPriceTextField = new GuiTextField(this.fontRenderer, this.width / 2 - 100, this.height / 2 + 20, 200, 20);
+        this.buyPriceTextField.setText(String.valueOf(((ShopItem) this.editStack.getItem()).getBuyPrice(this.editStack.getItemSubtype())));
     }
 
     public void updateScreen() {
-        this.theGuiTextField.updateCursorCounter();
+        this.soldPriceTextField.updateCursorCounter();
+        this.buyPriceTextField.updateCursorCounter();
     }
 
     public void onGuiClosed() {
@@ -38,36 +45,65 @@ public class GuiEditPrice extends GuiScreen {
     protected void actionPerformed(GuiButton par1GuiButton) {
         if (par1GuiButton.enabled) {
             if (par1GuiButton.id == 1) {
-                ShopApi.setPrice(this.editStack, this.parseSoldPrice(), 0);
-                System.out.println(((ShopStack) this.editStack).getPrice());
+                ShopApi.setPrice(this.editStack, this.parsePrice(this.soldPriceTextField), this.parsePrice(this.buyPriceTextField));
+                ShopConfigs.updateItemPrice(this.editStack, this.parsePrice(this.soldPriceTextField), this.parsePrice(this.buyPriceTextField));
                 this.mc.displayGuiScreen(this.parentGuiScreen);
             }
         }
     }
 
     protected void keyTyped(char par1, int par2) {
-        this.theGuiTextField.textboxKeyTyped(par1, par2);
-        ((GuiButton) this.buttonList.get(0)).enabled = this.theGuiTextField.getText().trim().length() > 0;
+        this.soldPriceTextField.textboxKeyTyped(par1, par2);
+        this.buyPriceTextField.textboxKeyTyped(par1, par2);
+        ((GuiButton) this.buttonList.get(0)).enabled = !this.soldPriceTextField.getText().trim().isEmpty();
+        ((GuiButton) this.buttonList.get(0)).enabled = !this.buyPriceTextField.getText().trim().isEmpty();
 
         if (par2 == 28 || par2 == 156) {
             this.actionPerformed((GuiButton) this.buttonList.get(0));
         }
+        super.keyTyped(par1, par2);
     }
 
     protected void mouseClicked(int par1, int par2, int par3) {
         super.mouseClicked(par1, par2, par3);
-        this.theGuiTextField.mouseClicked(par1, par2, par3);
+        this.soldPriceTextField.mouseClicked(par1, par2, par3);
+        this.buyPriceTextField.mouseClicked(par1, par2, par3);
     }
 
     public void drawScreen(int par1, int par2, float par3) {
         this.drawDefaultBackground();
-        this.theGuiTextField.drawTextBox();
+        this.drawCenteredString(this.fontRenderer, I18n.getStringParams("shop.editPrice.title", this.editStack.getDisplayName()), this.width / 2, 15, 16777215);
+        this.drawString(this.fontRenderer, I18n.getString("shop.editPrice.soldPrice"), this.width / 2 - 100, this.height / 2 - 30, 4210752);
+        this.drawString(this.fontRenderer, I18n.getString("shop.editPrice.buyPrice"), this.width / 2 - 100, this.height / 2 + 10, 4210752);
+        this.soldPriceTextField.drawTextBox();
+        this.buyPriceTextField.drawTextBox();
+        this.renderStack();
         super.drawScreen(par1, par2, par3);
     }
 
-    private double parseSoldPrice() {
+    public void renderStack() {
+        ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+        int screenWidth = scaledResolution.getScaledWidth();
+        int screenHeight = scaledResolution.getScaledHeight();
+        GL11.glPushMatrix();
+        GL11.glScalef(2.0F, 2.0F, 1.0F);
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        RenderHelper.enableGUIStandardItemLighting();
+        int renderX = (screenWidth / 2) / 2 - 8;
+        int renderY = (screenHeight / 4) / 2 - 8;
+        itemRenderer.renderItemAndEffectIntoGUI(mc.fontRenderer, mc.getTextureManager(), this.editStack, renderX, renderY);
+        itemRenderer.renderItemOverlayIntoGUI(mc.fontRenderer, mc.getTextureManager(), this.editStack, renderX, renderY);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glPopMatrix();
+    }
+
+    private double parsePrice(GuiTextField textField) {
         try {
-            return Double.parseDouble(this.theGuiTextField.getText().trim());
+            return Double.parseDouble(textField.getText().trim());
         } catch (NumberFormatException e) {
             return 0;
         }
