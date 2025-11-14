@@ -4,20 +4,14 @@ import cn.wensc.mitemod.shop.ShopInit;
 import cn.wensc.mitemod.shop.api.ShopItem;
 import cn.wensc.mitemod.shop.api.ShopStack;
 import cn.wensc.mitemod.shop.util.*;
-import moddedmite.rustedironcore.api.util.LogUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.Item;
 import net.minecraft.ItemStack;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -84,10 +78,10 @@ public class ShopConfigs {
         if (soldPrice > 0.0D || buyPrice > 0.0D) PriceStacks.addDirtyStack(itemStack);
         if (item.getHasSubtypes()) {
             fileWriter.write("// " + itemStack.getDisplayName() + " ID: " + itemStack.itemID + " meta:" + sub + "\n");
-            fileWriter.write(itemStack.getUnlocalizedName() + "$" + item.itemID + "$" + sub + "=" + soldPrice + "," + buyPrice + "\n\n");
+            fileWriter.write(getItemKey(itemStack) + "=" + soldPrice + "," + buyPrice + "\n\n");
         } else {
             fileWriter.write("// " + itemStack.getDisplayName() + " ID: " + item.itemID + "\n");
-            fileWriter.write(itemStack.getUnlocalizedName() + "$" + item.itemID + "=" + soldPrice + "," + buyPrice + "\n\n");
+            fileWriter.write(getItemKey(itemStack) + "=" + soldPrice + "," + buyPrice + "\n\n");
         }
     }
 
@@ -127,34 +121,6 @@ public class ShopConfigs {
             ShopItem.setSoldPrice(item, subtype, priceItem.soldPrice());
         });
     }
-
-    public static void updateItemPrice(ItemStack stack, double soldPrice, double buyPrice) {
-        ((ShopStack) stack).setPrice(soldPrice, buyPrice);
-        try {
-            List<String> lines = Files.readAllLines(ShopConfigFile.toPath());
-            List<String> modifiedLine = new ArrayList<>();
-            String targetKey = getItemKey(stack);
-            String newLineContent = targetKey + "=" + soldPrice + "," + buyPrice;
-            boolean found = false;
-            for (String line : lines) {
-                if (line.trim().startsWith("//") || line.trim().isEmpty()) {
-                    modifiedLine.add(line);
-                    continue;
-                }
-                if (line.contains(targetKey + "=") && !found) {
-                    modifiedLine.add(newLineContent);
-                    found = true;
-                } else {
-                    modifiedLine.add(line);
-                }
-            }
-            Files.write(ShopConfigFile.toPath(), modifiedLine);
-            ShopConfigs.loadOrCreate();
-        } catch (IOException e) {
-            ShopInit.LOGGER.warn("Failed to update config file", e);
-        }
-    }
-
 
     private static String getItemKey(ItemStack stack) {
         Item item = stack.getItem();

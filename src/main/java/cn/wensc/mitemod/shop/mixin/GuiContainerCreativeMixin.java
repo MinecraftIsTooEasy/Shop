@@ -1,9 +1,8 @@
 package cn.wensc.mitemod.shop.mixin;
 
 import cn.wensc.mitemod.shop.config.ShopConfigML;
-import cn.wensc.mitemod.shop.screen.GuiEditPrice;
+import cn.wensc.mitemod.shop.client.screen.GuiEditPrice;
 import net.minecraft.*;
-import net.xiaoyu233.fml.util.ReflectHelper;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,7 +21,7 @@ public abstract class GuiContainerCreativeMixin extends InventoryEffectRenderer 
             if (Keyboard.isKeyDown(Keyboard.KEY_LMENU/* left Alt */) && clickedButton == 1) {
                 if (slotIn.getHasStack()) {
                     ItemStack stack = slotIn.getStack().copy();
-                    this.mc.displayGuiScreen(new GuiEditPrice(ReflectHelper.dyCast(this), stack));
+                    this.mc.displayGuiScreen(new GuiEditPrice(this, stack));
                 }
             }
         }

@@ -1,4 +1,4 @@
-package cn.wensc.mitemod.shop.screen;
+package cn.wensc.mitemod.shop.inventory;
 
 import cn.wensc.mitemod.shop.api.ShopApi;
 import cn.wensc.mitemod.shop.api.ShopPlayer;
@@ -17,7 +17,7 @@ public class ContainerShop extends Container {
         int row;
         for (row = 0; row < 5; row++) {
             for (int i = 0; i < 9; i++)
-                addSlotToContainer(new SlotShop(this, this.inventory, i + row * 9, 8 + i * 18, 18 + row * 18));
+                addSlotToContainer(new SlotShop(this.inventory, i + row * 9, 8 + i * 18, 18 + row * 18));
         }
         for (row = 0; row < 3; row++) {
             for (int i = 0; i < 9; i++)
@@ -25,13 +25,11 @@ public class ContainerShop extends Container {
         }
         for (int col = 0; col < 9; col++)
             addSlotToContainer(new Slot(player.inventory, col, 8 + col * 18, 198));
+        IInventory inventory1 = new InventoryTrash(this);
+        addSlotToContainer(new Slot(inventory1, 0, 173, 112));// not sure the x,y
     }
 
     public void onContainerClosed(EntityPlayer par1EntityPlayer) {
-    }
-
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
     }
 
     public boolean canInteractWith(EntityPlayer par1EntityPlayer) {
@@ -74,7 +72,8 @@ public class ContainerShop extends Container {
 
         double totalMoney = template.getMaxStackSize() * buyPrice;
         if (moneyManager.getMoney() >= totalMoney) {
-            player.inventory.addItemStackToInventoryOrDropIt(new ItemStack(template.itemID, template.getMaxStackSize(), template.getItemSubtype()));
+            ItemStack out = new ItemStack(template.itemID, template.getMaxStackSize(), template.getItemSubtype());
+            player.inventory.addItemStackToInventoryOrDropIt(out);
             moneyManager.subMoneyWithSimplify(totalMoney);
         } else {
             int maxStackSize = (int) Math.floor(moneyManager.getMoney() / buyPrice);

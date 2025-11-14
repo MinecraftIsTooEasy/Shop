@@ -2,7 +2,7 @@ package cn.wensc.mitemod.shop.mixin;
 
 import cn.wensc.mitemod.shop.api.ShopApi;
 import cn.wensc.mitemod.shop.api.ShopStack;
-import cn.wensc.mitemod.shop.screen.SlotShop;
+import cn.wensc.mitemod.shop.inventory.SlotShop;
 import cn.wensc.mitemod.shop.util.PriceItem;
 import net.minecraft.*;
 import org.spongepowered.asm.mixin.Mixin;

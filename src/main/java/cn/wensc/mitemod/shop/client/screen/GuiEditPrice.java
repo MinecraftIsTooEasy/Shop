@@ -1,15 +1,11 @@
-package cn.wensc.mitemod.shop.screen;
+package cn.wensc.mitemod.shop.client.screen;
 
 import cn.wensc.mitemod.shop.api.ShopApi;
 import cn.wensc.mitemod.shop.api.ShopItem;
-import cn.wensc.mitemod.shop.api.ShopStack;
-import cn.wensc.mitemod.shop.config.ShopConfigs;
 import net.minecraft.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
-import java.awt.*;
 
 public class GuiEditPrice extends GuiScreen {
     private final ItemStack editStack;
@@ -46,7 +42,7 @@ public class GuiEditPrice extends GuiScreen {
         if (par1GuiButton.enabled) {
             if (par1GuiButton.id == 1) {
                 ShopApi.setPrice(this.editStack, this.parsePrice(this.soldPriceTextField), this.parsePrice(this.buyPriceTextField));
-                ShopConfigs.updateItemPrice(this.editStack, this.parsePrice(this.soldPriceTextField), this.parsePrice(this.buyPriceTextField));
+                ShopApi.saveConfigToFile();
                 this.mc.displayGuiScreen(this.parentGuiScreen);
             }
         }

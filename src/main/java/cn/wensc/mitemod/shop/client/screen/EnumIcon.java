@@ -1,0 +1,55 @@
+package cn.wensc.mitemod.shop.client.screen;
+
+import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
+import fi.dy.masa.malilib.render.RenderUtils;
+import net.minecraft.ResourceLocation;
+
+public enum EnumIcon implements IGuiIcon {
+    BUTTON_BACKGROUND_NORMAL(0, 222, 22, 22),
+    BUTTON_BACKGROUND_DISABLED(44, 222, 22, 22),
+    BUTTON_BACKGROUND_HOVER(66, 222, 22, 22),
+    SWITCH_VIEW(88, 222, 22, 22),
+    ;
+
+    private final int u;
+    private final int v;
+    private final int w;
+    private final int h;
+
+    EnumIcon(int u, int v, int w, int h) {
+        this.u = u;
+        this.v = v;
+        this.w = w;
+        this.h = h;
+    }
+
+    @Override
+    public int getWidth() {
+        return this.w;
+    }
+
+    @Override
+    public int getHeight() {
+        return this.h;
+    }
+
+    @Override
+    public int getU() {
+        return this.u;
+    }
+
+    @Override
+    public int getV() {
+        return this.v;
+    }
+
+    @Override
+    public void renderAt(int x, int y, float zLevel, boolean enabled, boolean selected) {
+        RenderUtils.drawTexturedRect(x, y, this.u, this.v, this.w, this.h, zLevel);
+    }
+
+    @Override
+    public ResourceLocation getTexture() {
+        return Textures.TEXTURE;
+    }
+}

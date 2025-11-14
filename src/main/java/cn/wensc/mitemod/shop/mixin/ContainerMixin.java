@@ -1,6 +1,6 @@
 package cn.wensc.mitemod.shop.mixin;
 
-import cn.wensc.mitemod.shop.screen.SlotShop;
+import cn.wensc.mitemod.shop.inventory.SlotShop;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.Container;

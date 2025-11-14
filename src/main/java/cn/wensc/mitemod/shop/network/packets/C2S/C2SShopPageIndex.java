@@ -1,21 +1,21 @@
 package cn.wensc.mitemod.shop.network.packets.C2S;
 
+import cn.wensc.mitemod.shop.inventory.ContainerShop;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
-import cn.wensc.mitemod.shop.screen.ContainerShop;
 import moddedmite.rustedironcore.network.Packet;
 import moddedmite.rustedironcore.network.PacketByteBuf;
 import net.minecraft.Container;
 import net.minecraft.EntityPlayer;
 import net.minecraft.ResourceLocation;
 
-public class C2SShopIndex implements Packet {
+public class C2SShopPageIndex implements Packet {
     private final int index;
 
-    public C2SShopIndex(int index) {
+    public C2SShopPageIndex(int index) {
         this.index = index;
     }
 
-    public C2SShopIndex(PacketByteBuf packetByteBuf) {
+    public C2SShopPageIndex(PacketByteBuf packetByteBuf) {
         this(packetByteBuf.readInt());
     }
 
@@ -26,15 +26,14 @@ public class C2SShopIndex implements Packet {
 
     @Override
     public void apply(EntityPlayer entityPlayer) {
-        Container var16 = entityPlayer.openContainer;
-        if (var16 instanceof ContainerShop) {
-            ((ContainerShop) var16).inventory.pageIndex = index;
-            ((ContainerShop) var16).inventory.initItemList();
+        Container container = entityPlayer.openContainer;
+        if (container instanceof ContainerShop) {
+            ((ContainerShop) container).inventory.updateContent(this.index);
         }
     }
 
     @Override
     public ResourceLocation getChannel() {
-        return ShopNetwork.ShopIndex;
+        return ShopNetwork.ShopPageIndex;
     }
 }

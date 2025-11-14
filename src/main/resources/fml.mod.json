@@ -26,6 +26,9 @@
   "entrypoints": {
     "main": [
       "cn.wensc.mitemod.shop.ShopInit"
+    ],
+    "emi": [
+      "cn.wensc.mitemod.shop.compat.EmiPluginImpl"
     ]
   },
   "mixins": [

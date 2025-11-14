@@ -1,8 +1,8 @@
 package cn.wensc.mitemod.shop.network.packets.S2C;
 
 import cn.wensc.mitemod.shop.api.ShopPlayer;
+import cn.wensc.mitemod.shop.client.screen.GuiShop;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
-import cn.wensc.mitemod.shop.util.PriceStacks;
 import moddedmite.rustedironcore.network.Packet;
 import moddedmite.rustedironcore.network.PacketByteBuf;
 import net.minecraft.EntityPlayer;
@@ -30,7 +30,7 @@ public class S2CSyncShopInfo implements Packet {
 
     @Override
     public void apply(EntityPlayer entityPlayer) {
-        PriceStacks.setShopSize(shopSize);
+        GuiShop.shopSize = this.shopSize;
         ShopPlayer.getMoneyManager(entityPlayer).setMoney(this.money);
     }
 

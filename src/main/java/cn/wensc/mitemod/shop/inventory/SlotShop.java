@@ -1,4 +1,4 @@
-package cn.wensc.mitemod.shop.screen;
+package cn.wensc.mitemod.shop.inventory;
 
 import cn.wensc.mitemod.shop.api.ShopPlayer;
 import cn.wensc.mitemod.shop.api.ShopStack;
@@ -9,17 +9,13 @@ import net.minecraft.*;
 public class SlotShop extends Slot {
     int slotIndex;
 
-    ContainerShop containerShop;
-
     @Override
     public boolean canTakeStack(EntityPlayer par1EntityPlayer) {
         return false;
     }
 
-    public SlotShop(ContainerShop containerShop, IInventory inventory, int slot_index, int display_x, int display_y) {
+    public SlotShop(IInventory inventory, int slot_index, int display_x, int display_y) {
         super(inventory, slot_index, display_x, display_y, false);
-        setContainer(containerShop);
-        this.containerShop = containerShop;
         this.slotIndex = slot_index;
     }
 

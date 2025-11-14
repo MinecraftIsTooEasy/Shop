@@ -11,15 +11,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.Item;
 import net.minecraft.ItemStack;
 import net.minecraft.ServerPlayer;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 
 public class PriceStacks {
-    private static final List<ItemStack> merchandise = new ArrayList<>();
-
     private static final List<ItemStack> dirtyPriceStackList = new ArrayList<>();
-
-    private static int shopSize = 0;
 
     private static boolean loadingFlag = false;
 
@@ -33,7 +30,7 @@ public class PriceStacks {
             throw new IllegalStateException("PriceStacks: not loading");
         }
         loadingFlag = false;
-        PriceStacks.sortList();
+        onListChanged();
     }
 
     public static boolean isLoading() {
@@ -43,6 +40,7 @@ public class PriceStacks {
     /**
      * Only used on loading
      */
+    @ApiStatus.Internal
     public static void setPrice(ItemStack itemStack, double soldPrice, double buyPrice) {
         Item item = itemStack.getItem();
         int sub = itemStack.getItemSubtype();
@@ -54,35 +52,13 @@ public class PriceStacks {
         }
     }
 
+    @ApiStatus.Internal
     public static void addDirtyStack(ItemStack itemStack) {
         if (isLoading()) {
             dirtyPriceStackList.add(itemStack);
         } else {
             throw new IllegalStateException("PriceStacks: not loading");
         }
-    }
-
-    public static void sortList() {
-        dirtyPriceStackList.sort((o1, o2) -> {
-            double offset;
-            double o1Buy = ShopStack.getPrice(o1).buyPrice();
-            double o2Buy = ShopStack.getPrice(o2).buyPrice();
-            if (o2Buy > 0.0D && o1Buy > 0.0D) {
-                offset = o1Buy - o2Buy;
-            } else {
-                offset = o2Buy - o1Buy;
-            }
-            return Double.compare(offset, 0.0D);
-        });
-        refreshMerchandise();
-    }
-
-    public static int getMerchandiseSize() {
-        return merchandise.size();
-    }
-
-    public static List<ItemStack> subList(int from, int to) {
-        return merchandise.subList(from, to);
     }
 
     public static void handleNewPrice(ItemStack itemStack, double soldPrice, double buyPrice) {
@@ -105,7 +81,7 @@ public class PriceStacks {
     @Environment(EnvType.SERVER)
     public static void sync(ServerPlayer player) {
         ShopPropertyRegistry.run();
-        Network.sendToClient(player, new S2CSyncPrice(toMap(dirtyPriceStackList)));
+        Network.sendToClient(player, new S2CSyncPrice(CODEC.toMap(dirtyPriceStackList)));
     }
 
     @Environment(EnvType.CLIENT)
@@ -113,41 +89,44 @@ public class PriceStacks {
         ShopConfigs.overrideItemPrice(map);
         List<ItemStack> list = dirtyPriceStackList;
         list.clear();
-        list.addAll(toList(map));
-        refreshMerchandise();
+        list.addAll(CODEC.toList(map));
+        onListChanged();
     }
 
-    public static int getShopSize() {
-        return shopSize;
+    private static void onListChanged() {
     }
 
-    public static void setShopSize(int shopSize) {
-        PriceStacks.shopSize = shopSize;
+    public static List<ItemStack> getPurchasableStacks() {
+        return dirtyPriceStackList.stream()
+                .filter(x -> ShopStack.getPrice(x).buyPrice() > 0)
+                .sorted(Comparator.comparingDouble(x -> ShopStack.getPrice(x).buyPrice()))
+                .toList();
     }
 
-    private static List<ItemStack> toList(Map<EigenItemStack, PriceItem> map) {
-        return map.entrySet().stream().map(entry -> {
-            EigenItemStack eigenItemStack = entry.getKey();
-            PriceItem priceItem = entry.getValue();
-            ItemStack itemStack = new ItemStack(eigenItemStack.item(), 1, eigenItemStack.subtype());
-            ShopStack.setPrice(itemStack, priceItem);
-            return itemStack;
-        }).toList();
+    public static List<ItemStack> getSellableStacks() {
+        return dirtyPriceStackList.stream()
+                .filter(x -> ShopStack.getPrice(x).soldPrice() > 0)
+                .sorted(Comparator.comparingDouble(x -> ShopStack.getPrice(x).soldPrice()))
+                .toList();
     }
 
-    private static Map<EigenItemStack, PriceItem> toMap(List<ItemStack> list) {
-        Map<EigenItemStack, PriceItem> map = new LinkedHashMap<>();
-        for (ItemStack itemStack : list) {
-            map.put(new EigenItemStack(itemStack.getItem(), itemStack.getItemSubtype()), ShopStack.getPrice(itemStack));
+    private static class CODEC {
+        private static List<ItemStack> toList(Map<EigenItemStack, PriceItem> map) {
+            return map.entrySet().stream().map(entry -> {
+                EigenItemStack eigenItemStack = entry.getKey();
+                PriceItem priceItem = entry.getValue();
+                ItemStack itemStack = new ItemStack(eigenItemStack.item(), 1, eigenItemStack.subtype());
+                ShopStack.setPrice(itemStack, priceItem);
+                return itemStack;
+            }).toList();
         }
-        return map;
-    }
 
-    private static void refreshMerchandise() {
-        merchandise.clear();
-        for (ItemStack itemStack : dirtyPriceStackList) {
-            PriceItem price = ShopStack.getPrice(itemStack);
-            if (price.buyPrice() > 0) merchandise.add(itemStack);
+        private static Map<EigenItemStack, PriceItem> toMap(List<ItemStack> list) {
+            Map<EigenItemStack, PriceItem> map = new LinkedHashMap<>();
+            for (ItemStack itemStack : list) {
+                map.put(new EigenItemStack(itemStack.getItem(), itemStack.getItemSubtype()), ShopStack.getPrice(itemStack));
+            }
+            return map;
         }
     }
 }

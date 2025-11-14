@@ -1,7 +1,7 @@
 package cn.wensc.mitemod.shop.mixin;
 
 import cn.wensc.mitemod.shop.api.ShopPlayer;
-import cn.wensc.mitemod.shop.screen.GuiShop;
+import cn.wensc.mitemod.shop.client.screen.GuiShop;
 import net.minecraft.ClientPlayer;
 import net.minecraft.EntityPlayer;
 import net.minecraft.Minecraft;

@@ -1,12 +1,15 @@
 package cn.wensc.mitemod.shop.mixin;
 
 import cn.wensc.mitemod.shop.api.ShopPlayer;
+import cn.wensc.mitemod.shop.inventory.ContainerShop;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
 import cn.wensc.mitemod.shop.network.packets.S2C.S2COpenWindow;
 import cn.wensc.mitemod.shop.network.packets.S2C.S2CSyncShopInfo;
-import cn.wensc.mitemod.shop.screen.ContainerShop;
 import cn.wensc.mitemod.shop.util.PriceStacks;
-import net.minecraft.*;
+import net.minecraft.EntityPlayer;
+import net.minecraft.ICrafting;
+import net.minecraft.ServerPlayer;
+import net.minecraft.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -26,7 +29,7 @@ public abstract class ServerPlayerMixin extends EntityPlayer implements ICraftin
         this.openContainer = new ContainerShop(this);
         this.openContainer.windowId = this.currentWindowId;
         this.openContainer.addCraftingToCrafters(this);
-        ShopNetwork.sendToClient(this.getAsEntityPlayerMP(), new S2CSyncShopInfo(PriceStacks.getMerchandiseSize(), ShopPlayer.getMoneyManager(this).getMoney()));
+        ShopNetwork.sendToClient(this.getAsEntityPlayerMP(), new S2CSyncShopInfo(PriceStacks.getPurchasableStacks().size(), ShopPlayer.getMoneyManager(this).getMoney()));
     }
 
     @Shadow
