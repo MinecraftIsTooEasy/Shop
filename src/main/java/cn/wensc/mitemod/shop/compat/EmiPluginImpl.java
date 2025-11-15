@@ -14,7 +14,11 @@ public class EmiPluginImpl implements EmiPlugin {
     }
 
     private static void addExclusionArea(GuiShop guiShop, Consumer<Bounds> consumer) {
-        int[] area = guiShop.getEmiExclusiveArea();
-        consumer.accept(new Bounds(area[0], area[1], area[2], area[3]));
+        guiShop.registerEmiExclusiveArea((x, y, width, height) -> consumer.accept(new Bounds(x, y, width, height)));
+    }
+
+    @FunctionalInterface
+    public interface BoundRegistry {
+        void register(int x, int y, int width, int height);
     }
 }

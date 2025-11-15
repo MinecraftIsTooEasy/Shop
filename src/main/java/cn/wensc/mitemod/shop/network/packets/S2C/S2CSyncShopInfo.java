@@ -1,23 +1,14 @@
 package cn.wensc.mitemod.shop.network.packets.S2C;
 
 import cn.wensc.mitemod.shop.api.ShopPlayer;
-import cn.wensc.mitemod.shop.client.screen.GuiShop;
+import cn.wensc.mitemod.shop.inventory.ContainerShop;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
 import moddedmite.rustedironcore.network.Packet;
 import moddedmite.rustedironcore.network.PacketByteBuf;
 import net.minecraft.EntityPlayer;
 import net.minecraft.ResourceLocation;
 
-public class S2CSyncShopInfo implements Packet {
-    private final int shopSize;
-
-    private final double money;
-
-    public S2CSyncShopInfo(int shopSize, double money) {
-        this.shopSize = shopSize;
-        this.money = money;
-    }
-
+public record S2CSyncShopInfo(int shopSize, double money) implements Packet {
     public S2CSyncShopInfo(PacketByteBuf packetByteBuf) {
         this(packetByteBuf.readInt(), packetByteBuf.readDouble());
     }
@@ -30,7 +21,9 @@ public class S2CSyncShopInfo implements Packet {
 
     @Override
     public void apply(EntityPlayer entityPlayer) {
-        GuiShop.shopSize = this.shopSize;
+        if (entityPlayer.openContainer instanceof ContainerShop containerShop) {
+            containerShop.setShopSize(this.shopSize);
+        }
         ShopPlayer.getMoneyManager(entityPlayer).setMoney(this.money);
     }
 

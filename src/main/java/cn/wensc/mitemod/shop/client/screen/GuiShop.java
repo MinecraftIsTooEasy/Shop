@@ -2,28 +2,24 @@ package cn.wensc.mitemod.shop.client.screen;
 
 import cn.wensc.mitemod.shop.ShopInit;
 import cn.wensc.mitemod.shop.api.ShopPlayer;
+import cn.wensc.mitemod.shop.compat.EmiPluginImpl;
 import cn.wensc.mitemod.shop.config.ShopConfigML;
 import cn.wensc.mitemod.shop.inventory.ContainerShop;
-import cn.wensc.mitemod.shop.inventory.InventoryShop;
-import cn.wensc.mitemod.shop.network.ShopNetwork;
-import cn.wensc.mitemod.shop.network.packets.C2S.C2SShopPageIndex;
+import cn.wensc.mitemod.shop.network.packets.C2S.C2SContainerButtonClick;
+import moddedmite.rustedironcore.network.Network;
 import net.minecraft.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class GuiShop extends GuiContainer {
-    public static int shopSize;
-
     private GuiPaginationButton left;
     private GuiPaginationButton right;
     private GuiSwitchViewButton switchView;
 
-    private int pageIndex = 0;
-
     public GuiShop(EntityPlayer player) {
         super(new ContainerShop(player));
-        this.xSize = 195;// 176
+        this.xSize = 176;//total 195 but I keep the original
         this.ySize = 222;
     }
 
@@ -35,55 +31,31 @@ public class GuiShop extends GuiContainer {
         this.buttonList.add(this.right = new GuiPaginationButton(2, this.guiLeft + 176 - 19, this.height / 2 - 4, true));
         this.buttonList.add(this.switchView = new GuiSwitchViewButton(3, this.guiLeft - 26, this.guiTop + 34));
         this.left.enabled = false;
-        ShopNetwork.sendToServer(new C2SShopPageIndex(this.pageIndex));
+        this.right.enabled = false;
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
+
+        ContainerShop container = this.getContainer();
+        this.left.enabled = container.canPageUp();
+        this.right.enabled = container.canPageDown();
+
         int wheelStatus = Mouse.getDWheel();
         if (wheelStatus == 0) return;
         if (wheelStatus < 0) {
-            this.pageDown();
+            this.actionPerformed(this.right);
         } else {
-            this.pageUp();
+            this.actionPerformed(this.left);
         }
     }
 
-    protected void actionPerformed(GuiButton var1) {
-        switch (var1.id) {
-            case 1 -> pageUp();
-            case 2 -> pageDown();
-            case 3 -> switchView();
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        if (this.getContainer().clickMenuButton(this.mc.thePlayer, button.id)) {
+            this.clickContainerButton(this.inventorySlots.windowId, button.id);
         }
-    }
-
-    private void switchView() {
-        // TODO
-    }
-
-    private void pageDown() {
-        if (!this.canPageDown()) return;
-        this.pageIndex++;
-        if (this.pageIndex == (double) (shopSize / InventoryShop.pageSize)) this.right.enabled = false;
-        this.left.enabled = true;
-        ShopNetwork.sendToServer(new C2SShopPageIndex(this.pageIndex));
-    }
-
-    private void pageUp() {
-        if (!this.canPageUp()) return;
-        this.pageIndex--;
-        if (this.pageIndex == 0) this.left.enabled = false;
-        this.right.enabled = true;
-        ShopNetwork.sendToServer(new C2SShopPageIndex(this.pageIndex));
-    }
-
-    private boolean canPageUp() {
-        return this.left.enabled;
-    }
-
-    private boolean canPageDown() {
-        return this.right.enabled;
     }
 
     @Override
@@ -99,7 +71,7 @@ public class GuiShop extends GuiContainer {
     public void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(Textures.TEXTURE);
-        drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, 195, this.height);
     }
 
     @Override
@@ -117,13 +89,26 @@ public class GuiShop extends GuiContainer {
                 if (slotIn.getHasStack()) {
                     ItemStack stack = slotIn.getStack().copy();
                     this.mc.displayGuiScreen(new GuiEditPrice(this, stack));
+                    return;
                 }
             }
         }
         super.handleMouseClick(slotIn, slotId, clickedButton, clickType);
     }
 
-    public int[] getEmiExclusiveArea() {
-        return new int[]{this.switchView.xPosition - 4, this.switchView.yPosition - 4, 30, 30};
+    public void registerEmiExclusiveArea(EmiPluginImpl.BoundRegistry registry) {
+        registry.register(this.switchView.xPosition - 4, this.switchView.yPosition - 4, 30, 30);
+        registry.register(this.guiLeft + 176, this.guiTop, 19, 137);
+    }
+
+    /**
+     * Network action
+     */
+    private void clickContainerButton(int containerId, int buttonId) {
+        Network.sendToServer(new C2SContainerButtonClick(containerId, buttonId));
+    }
+
+    private ContainerShop getContainer() {
+        return (ContainerShop) this.inventorySlots;
     }
 }

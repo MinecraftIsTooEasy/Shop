@@ -1,8 +1,8 @@
 package cn.wensc.mitemod.shop.network;
 
 import cn.wensc.mitemod.shop.ShopInit;
+import cn.wensc.mitemod.shop.network.packets.C2S.C2SContainerButtonClick;
 import cn.wensc.mitemod.shop.network.packets.C2S.C2SOpenShop;
-import cn.wensc.mitemod.shop.network.packets.C2S.C2SShopPageIndex;
 import cn.wensc.mitemod.shop.network.packets.S2C.S2COpenWindow;
 import cn.wensc.mitemod.shop.network.packets.S2C.S2CSyncMoney;
 import cn.wensc.mitemod.shop.network.packets.S2C.S2CSyncPrice;
@@ -17,10 +17,10 @@ import net.xiaoyu233.fml.FishModLoader;
 public class ShopNetwork {
     public static final ResourceLocation OpenWindow = new ResourceLocation(ShopInit.ShopModID, "OpenWindow");
     public static final ResourceLocation OpenShop = new ResourceLocation(ShopInit.ShopModID, "OpenShop");
-    public static final ResourceLocation ShopPageIndex = new ResourceLocation(ShopInit.ShopModID, "ShopPageIndex");
     public static final ResourceLocation SyncShopInfo = new ResourceLocation(ShopInit.ShopModID, "SyncShopInfo");
     public static final ResourceLocation SyncMoney = new ResourceLocation(ShopInit.ShopModID, "SyncMoney");
     public static final ResourceLocation SyncPrice = new ResourceLocation(ShopInit.ShopModID, "SyncPrice");
+    public static final ResourceLocation ContainerButtonClick = new ResourceLocation(ShopInit.ShopModID, "ContainerButtonClick");
 
     public static void sendToClient(ServerPlayer player, Packet packet) {
         Network.sendToClient(player, packet);
@@ -46,6 +46,6 @@ public class ShopNetwork {
 
     private static void initServer() {
         PacketReader.registerServerPacketReader(ShopNetwork.OpenShop, packetByteBuf -> new C2SOpenShop());
-        PacketReader.registerServerPacketReader(ShopNetwork.ShopPageIndex, C2SShopPageIndex::new);
+        PacketReader.registerServerPacketReader(ShopNetwork.ContainerButtonClick, C2SContainerButtonClick::new);
     }
 }
