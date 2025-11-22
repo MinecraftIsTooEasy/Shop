@@ -173,10 +173,10 @@ public class ContainerShop extends Container {
         SELLABLE,
         BOTH,
         ;
-        final ImmutableList<View> VALUES = ImmutableList.copyOf(values());
+        static final ImmutableList<View> VALUES = ImmutableList.copyOf(values());
 
         View next() {
-            return VALUES.get((this.ordinal() + 1) % 3);
+            return VALUES.get((this.ordinal() + 1) % VALUES.size());
         }
     }
 }
