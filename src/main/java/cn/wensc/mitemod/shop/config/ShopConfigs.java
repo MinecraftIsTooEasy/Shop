@@ -25,6 +25,7 @@ public class ShopConfigs {
     }
 
     public static void readAndAppendMissing(File file_mite, Properties properties) {
+        PriceStacks.clear();
         PriceStacks.beginLoading();
         try {
             FileWriter appender = new FileWriter(file_mite, true);
@@ -86,6 +87,7 @@ public class ShopConfigs {
     }
 
     public static void generateFile(File file) {
+        PriceStacks.clear();
         PriceStacks.beginLoading();
         try {
             FileWriter fileWriter = new FileWriter(file);

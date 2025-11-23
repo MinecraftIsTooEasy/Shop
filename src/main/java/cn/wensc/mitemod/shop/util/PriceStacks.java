@@ -20,8 +20,11 @@ public class PriceStacks {
 
     private static boolean loadingFlag = false;
 
-    public static void beginLoading() {
+    public static void clear() {
         dirtyPriceStackList.clear();
+    }
+
+    public static void beginLoading() {
         loadingFlag = true;
     }
 
@@ -62,11 +65,14 @@ public class PriceStacks {
     }
 
     public static void handleNewPrice(ItemStack itemStack, double soldPrice, double buyPrice) {
+        beginLoading();
+
         Optional<ItemStack> current = matchItemStack(itemStack);
         current.ifPresent(dirtyPriceStackList::remove);
-        beginLoading();
         setPrice(new ItemStack(itemStack.itemID, 1, itemStack.getItemSubtype()), soldPrice, buyPrice);
+
         endLoading();
+        onListChanged();
     }
 
     private static Optional<ItemStack> matchItemStack(ItemStack itemStack) {

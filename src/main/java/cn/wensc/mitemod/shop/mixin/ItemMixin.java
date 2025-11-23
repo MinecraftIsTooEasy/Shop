@@ -38,6 +38,8 @@ public abstract class ItemMixin implements ShopItem {
     public void setSoldPrice(int subtype, double soldPrice) {
         if (soldPrice > 0) {
             this.soldPriceArray.put(subtype, soldPrice);
+        } else {
+            this.soldPriceArray.remove(subtype);
         }
     }
 
@@ -45,12 +47,15 @@ public abstract class ItemMixin implements ShopItem {
     public void setBuyPrice(int subtype, double buyPrice) {
         if (buyPrice > 0) {
             this.buyPriceArray.put(subtype, buyPrice);
+        } else {
+            this.buyPriceArray.remove(subtype);
         }
     }
 
     @Override
     public ShopItem setBuyPriceForAllSubs(double price) {
         if (price <= 0) {
+            this.buyPriceArray.clear();
             return this;
         }
         if (getHasSubtypes()) {

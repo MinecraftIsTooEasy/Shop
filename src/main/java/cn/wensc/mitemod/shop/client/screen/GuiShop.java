@@ -2,11 +2,10 @@ package cn.wensc.mitemod.shop.client.screen;
 
 import cn.wensc.mitemod.shop.ShopInit;
 import cn.wensc.mitemod.shop.api.ShopPlayer;
+import cn.wensc.mitemod.shop.client.MultiPlayerGameMode;
 import cn.wensc.mitemod.shop.compat.EmiPluginImpl;
 import cn.wensc.mitemod.shop.config.ShopConfigML;
 import cn.wensc.mitemod.shop.inventory.ContainerShop;
-import cn.wensc.mitemod.shop.network.packets.C2S.C2SContainerButtonClick;
-import moddedmite.rustedironcore.network.Network;
 import net.minecraft.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -54,7 +53,7 @@ public class GuiShop extends GuiContainer {
     @Override
     protected void actionPerformed(GuiButton button) {
         if (this.getContainer().clickMenuButton(this.mc.thePlayer, button.id)) {
-            this.clickContainerButton(this.inventorySlots.windowId, button.id);
+            MultiPlayerGameMode.handleInventoryButtonClick(this.inventorySlots.windowId, button.id);
         }
     }
 
@@ -97,15 +96,8 @@ public class GuiShop extends GuiContainer {
     }
 
     public void registerEmiExclusiveArea(EmiPluginImpl.BoundRegistry registry) {
-        registry.register(this.switchView.xPosition - 4, this.switchView.yPosition - 4, 30, 30);
+        registry.register(this.guiLeft - 30, this.guiTop - 30, 30, 30);
         registry.register(this.guiLeft + 176, this.guiTop, 19, 137);
-    }
-
-    /**
-     * Network action
-     */
-    private void clickContainerButton(int containerId, int buttonId) {
-        Network.sendToServer(new C2SContainerButtonClick(containerId, buttonId));
     }
 
     private ContainerShop getContainer() {

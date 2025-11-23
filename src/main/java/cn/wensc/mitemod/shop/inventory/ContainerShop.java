@@ -120,6 +120,10 @@ public class ContainerShop extends Container {
     }
 
     public boolean clickMenuButton(EntityPlayer player, int id) {
+        if (id == 0) {// request for refreshing; no button has id 0 now
+            if (player.onServer()) this.updateDisplay();
+            return true;
+        }
         if (id == 1 && this.canPageUp()) {
             this.pageIndex--;
             if (player.onServer()) this.updateDisplay();

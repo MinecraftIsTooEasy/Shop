@@ -2,6 +2,7 @@ package cn.wensc.mitemod.shop.client.screen;
 
 import cn.wensc.mitemod.shop.api.ShopApi;
 import cn.wensc.mitemod.shop.api.ShopItem;
+import cn.wensc.mitemod.shop.client.MultiPlayerGameMode;
 import net.minecraft.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -44,6 +45,9 @@ public class GuiEditPrice extends GuiScreen {
                 ShopApi.setPrice(this.editStack, this.parsePrice(this.soldPriceTextField), this.parsePrice(this.buyPriceTextField));
                 ShopApi.saveConfigToFile();
                 this.mc.displayGuiScreen(this.parentGuiScreen);
+                if (this.parentGuiScreen instanceof GuiShop guiShop) {
+                    MultiPlayerGameMode.handleInventoryButtonClick(guiShop.inventorySlots.windowId, 0);// refreshing shop display
+                }
             }
         }
     }
