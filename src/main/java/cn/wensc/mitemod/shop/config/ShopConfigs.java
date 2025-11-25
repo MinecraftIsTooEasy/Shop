@@ -25,8 +25,8 @@ public class ShopConfigs {
     }
 
     public static void readAndAppendMissing(File file_mite, Properties properties) {
-        PriceStacks.clear();
-        PriceStacks.beginLoading();
+        PriceStackStorage.clear();
+        PriceStackStorage.beginLoading();
         try {
             FileWriter appender = new FileWriter(file_mite, true);
             for (Item item : Item.itemsList) {
@@ -40,7 +40,7 @@ public class ShopConfigs {
         } catch (IOException e) {
             ShopInit.LOGGER.warn("error reading shop config", e);
         } finally {
-            PriceStacks.endLoading();
+            PriceStackStorage.endLoading();
         }
     }
 
@@ -66,7 +66,7 @@ public class ShopConfigs {
             buyPrice = 0.0D;
         }
 
-        PriceStacks.setPrice(itemStack, soldPrice, buyPrice);
+        PriceStackStorage.setPrice(itemStack, soldPrice, buyPrice);
         return true;
     }
 
@@ -76,7 +76,7 @@ public class ShopConfigs {
         double soldPrice = ((ShopItem) item).getSoldPrice(sub);
         double buyPrice = ((ShopItem) item).getBuyPrice(sub);
         ((ShopStack) itemStack).setPrice(soldPrice, buyPrice);
-        if (soldPrice > 0.0D || buyPrice > 0.0D) PriceStacks.addDirtyStack(itemStack);
+        if (soldPrice > 0.0D || buyPrice > 0.0D) PriceStackStorage.addDirtyStack(itemStack);
         if (item.getHasSubtypes()) {
             fileWriter.write("// " + itemStack.getDisplayName() + " ID: " + itemStack.itemID + " meta:" + sub + "\n");
             fileWriter.write(getItemKey(itemStack) + "=" + soldPrice + "," + buyPrice + "\n\n");
@@ -87,8 +87,8 @@ public class ShopConfigs {
     }
 
     public static void generateFile(File file) {
-        PriceStacks.clear();
-        PriceStacks.beginLoading();
+        PriceStackStorage.clear();
+        PriceStackStorage.beginLoading();
         try {
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.write("// 商店配置文件，说明：参数之间使用英文逗号分隔，请严格遵循格式（商品英文名=售出价格,购买价格），价格小于等于0代表不可出售或者不可购买，价格可以为小数，乱改造成无法启动概不负责\n");
@@ -102,7 +102,7 @@ public class ShopConfigs {
         } catch (IOException e) {
             ShopInit.LOGGER.warn("error while generating shop config file", e);
         } finally {
-            PriceStacks.endLoading();
+            PriceStackStorage.endLoading();
         }
     }
 

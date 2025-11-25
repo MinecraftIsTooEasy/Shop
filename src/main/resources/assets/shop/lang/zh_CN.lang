@@ -1,8 +1,9 @@
 container.shop=商店
 container.shop.money=余额:%s
 key.openShop=打开商店
+
 commands.buy.usage=/buy <物品ID或注册名> [数量]
-commands.bud.invalid_id=商品ID输入错误
+commands.buy.invalid_id=商品ID输入错误
 commands.buy.untradeable_item=商店暂不可兑换该商品
 commands.buy.invalid_amount=请输入正确的商品数量或子码
 commands.buy.no_funds=钱包空空
@@ -13,3 +14,10 @@ commands.money.funds=现有余额：%s
 shop.editPrice.title=正在编辑：%s
 shop.editPrice.soldPrice=售出价格
 shop.editPrice.buyPrice=购买价格
+
+shop.category.purchasable=可购买
+shop.category.sellable=可售卖
+shop.category.both=全部
+
+shop.order.increasing=增序
+shop.order.decreasing=减序

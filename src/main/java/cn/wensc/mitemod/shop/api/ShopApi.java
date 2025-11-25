@@ -2,7 +2,7 @@ package cn.wensc.mitemod.shop.api;
 
 import cn.wensc.mitemod.shop.config.ShopConfigs;
 import cn.wensc.mitemod.shop.util.PriceItem;
-import cn.wensc.mitemod.shop.util.PriceStacks;
+import cn.wensc.mitemod.shop.util.PriceStackStorage;
 import net.minecraft.Item;
 import net.minecraft.ItemStack;
 
@@ -11,7 +11,7 @@ public interface ShopApi {
      * Hot reloading
      */
     static void setPrice(ItemStack itemStack, double soldPrice, double buyPrice) {
-        PriceStacks.handleNewPrice(itemStack, soldPrice, buyPrice);
+        PriceStackStorage.handleNewPrice(itemStack, soldPrice, buyPrice);
     }
 
     /**

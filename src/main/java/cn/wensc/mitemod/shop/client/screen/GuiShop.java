@@ -6,6 +6,10 @@ import cn.wensc.mitemod.shop.client.MultiPlayerGameMode;
 import cn.wensc.mitemod.shop.compat.EmiPluginImpl;
 import cn.wensc.mitemod.shop.config.ShopConfigML;
 import cn.wensc.mitemod.shop.inventory.ContainerShop;
+import cn.wensc.mitemod.shop.localization.ShopCategoryText;
+import cn.wensc.mitemod.shop.localization.ShopOrderText;
+import fi.dy.masa.malilib.gui.DrawContext;
+import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -15,6 +19,7 @@ public class GuiShop extends GuiContainer {
     private GuiPaginationButton left;
     private GuiPaginationButton right;
     private GuiSwitchViewButton switchView;
+    private GuiSwitchViewButton toggleOrder;
 
     public GuiShop(EntityPlayer player) {
         super(new ContainerShop(player));
@@ -29,6 +34,7 @@ public class GuiShop extends GuiContainer {
         this.buttonList.add(this.left = new GuiPaginationButton(1, this.guiLeft + 6, this.height / 2 - 4, false));
         this.buttonList.add(this.right = new GuiPaginationButton(2, this.guiLeft + 176 - 19, this.height / 2 - 4, true));
         this.buttonList.add(this.switchView = new GuiSwitchViewButton(3, this.guiLeft - 26, this.guiTop + 34));
+        this.buttonList.add(this.toggleOrder = new GuiSwitchViewButton(4, this.guiLeft - 26, this.guiTop + 64));
         this.left.enabled = false;
         this.right.enabled = false;
     }
@@ -74,6 +80,20 @@ public class GuiShop extends GuiContainer {
     }
 
     @Override
+    public void drawScreen(int par1, int par2, float par3) {
+        super.drawScreen(par1, par2, par3);
+        DrawContext drawContext = new DrawContext();
+        if (this.switchView.isHover()) {
+            String tooltip = ShopCategoryText.from(this.getContainer().getCategory()).translate();
+            RenderUtils.drawCreativeTabHoveringText(tooltip, par1, par2, drawContext);
+        }
+        if (this.toggleOrder.isHover()) {
+            String tooltip = ShopOrderText.fromOrder(this.getContainer().getOrder()).translate();
+            RenderUtils.drawCreativeTabHoveringText(tooltip, par1, par2, drawContext);
+        }
+    }
+
+    @Override
     protected void keyTyped(char par1, int par2) {
         if (par2 == ShopInit.keyBindShop.keyCode) {
             this.mc.thePlayer.closeScreen();
@@ -96,7 +116,7 @@ public class GuiShop extends GuiContainer {
     }
 
     public void registerEmiExclusiveArea(EmiPluginImpl.BoundRegistry registry) {
-        registry.register(this.guiLeft - 30, this.guiTop - 30, 30, 30);
+        registry.register(this.guiLeft - 30, this.guiTop + 30, 30, 60);
         registry.register(this.guiLeft + 176, this.guiTop, 19, 137);
     }
 

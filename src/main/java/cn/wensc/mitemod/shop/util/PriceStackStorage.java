@@ -15,7 +15,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 
-public class PriceStacks {
+public class PriceStackStorage {
     private static final List<ItemStack> dirtyPriceStackList = new ArrayList<>();
 
     private static boolean loadingFlag = false;
@@ -102,18 +102,8 @@ public class PriceStacks {
     private static void onListChanged() {
     }
 
-    public static List<ItemStack> getPurchasableStacks() {
-        return dirtyPriceStackList.stream()
-                .filter(x -> ShopStack.getPrice(x).buyPrice() > 0)
-                .sorted(Comparator.comparingDouble(x -> ShopStack.getPrice(x).buyPrice()))
-                .toList();
-    }
-
-    public static List<ItemStack> getSellableStacks() {
-        return dirtyPriceStackList.stream()
-                .filter(x -> ShopStack.getPrice(x).soldPrice() > 0)
-                .sorted(Comparator.comparingDouble(x -> ShopStack.getPrice(x).soldPrice()))
-                .toList();
+    public static List<ItemStack> getDirtyStacks() {
+        return Collections.unmodifiableList(dirtyPriceStackList);
     }
 
     private static class CODEC {

@@ -3,7 +3,7 @@ package cn.wensc.mitemod.shop.network.packets.S2C;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
 import cn.wensc.mitemod.shop.util.EigenItemStack;
 import cn.wensc.mitemod.shop.util.PriceItem;
-import cn.wensc.mitemod.shop.util.PriceStacks;
+import cn.wensc.mitemod.shop.util.PriceStackStorage;
 import moddedmite.rustedironcore.network.Packet;
 import moddedmite.rustedironcore.network.PacketByteBuf;
 import net.minecraft.EntityPlayer;
@@ -35,7 +35,7 @@ public class S2CSyncPrice implements Packet {
 
     @Override
     public void apply(EntityPlayer entityPlayer) {
-        PriceStacks.override(this.map);
+        PriceStackStorage.override(this.map);
     }
 
     @Override

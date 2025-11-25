@@ -14,3 +14,10 @@ commands.money.funds=Existing balance：%s
 shop.editPrice.title=Editing：%s
 shop.editPrice.soldPrice=soling price
 shop.editPrice.buyPrice=Buying price
+
+shop.category.purchasable=Purchasable
+shop.category.sellable=Sellable
+shop.category.both=Both
+
+shop.order.increasing=Increasing
+shop.order.decreasing=Decreasing

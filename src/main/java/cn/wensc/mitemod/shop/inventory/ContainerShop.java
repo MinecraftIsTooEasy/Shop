@@ -4,9 +4,11 @@ import cn.wensc.mitemod.shop.api.ShopApi;
 import cn.wensc.mitemod.shop.api.ShopPlayer;
 import cn.wensc.mitemod.shop.api.ShopStack;
 import cn.wensc.mitemod.shop.manager.MoneyManager;
+import cn.wensc.mitemod.shop.network.ShopNetwork;
+import cn.wensc.mitemod.shop.network.packets.S2C.S2CSyncShopInfo;
 import cn.wensc.mitemod.shop.util.PriceItem;
-import cn.wensc.mitemod.shop.util.PriceStacks;
-import com.google.common.collect.ImmutableList;
+import cn.wensc.mitemod.shop.util.PriceStackStorage;
+import cn.wensc.mitemod.shop.util.PriceStackView;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.*;
@@ -18,7 +20,8 @@ public class ContainerShop extends Container {
     public InventoryBasic display = new InventoryBasic("display", false, 45);
 
     private int shopSize = 0;
-    private View view = View.PURCHASABLE;
+    private ShopCategory category = ShopCategory.PURCHASABLE;
+    private ShopOrder order = ShopOrder.INCREASING;
     private int pageIndex = 0;
 
     public ContainerShop(EntityPlayer player) {
@@ -45,6 +48,8 @@ public class ContainerShop extends Container {
         return true;
     }
 
+    // quick move(shift click)
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int slotIndex) {
         Slot slot = (Slot) this.inventorySlots.get(slotIndex);
         if (slot == null) return null;
@@ -53,7 +58,10 @@ public class ContainerShop extends Container {
             handleBuyStack(slot);
             return null;
         }
-        handleSellStack(slot);
+        if (slotIndex < 45 + 9) {
+            handleSellStack(slot);
+            return null;
+        }
         return null;
     }
 
@@ -115,35 +123,64 @@ public class ContainerShop extends Container {
         this.shopSize = shopSize;
     }
 
-    public View getView() {
-        return this.view;
+    public ShopCategory getCategory() {
+        return this.category;
+    }
+
+    public ShopOrder getOrder() {
+        return this.order;
     }
 
     public boolean clickMenuButton(EntityPlayer player, int id) {
-        if (id == 0) {// request for refreshing; no button has id 0 now
-            if (player.onServer()) this.updateDisplay();
-            return true;
-        }
-        if (id == 1 && this.canPageUp()) {
-            this.pageIndex--;
-            if (player.onServer()) this.updateDisplay();
-            return true;
-        }
-        if (id == 2 && this.canPageDown()) {
-            this.pageIndex++;
-            if (player.onServer()) this.updateDisplay();
-            return true;
-        }
-        if (id == 3) {
-            this.switchView();
-            return true;
+        switch (id) {
+            case 0 -> {// request for refreshing; no button has id 0 now
+                if (player.onServer()) this.updateDisplay();
+                return true;
+            }
+            case 1 -> {
+                if (this.canPageUp()) {
+                    this.pageIndex--;
+                    if (player.onServer()) this.updateDisplay();
+                    return true;
+                }
+            }
+            case 2 -> {
+                if (this.canPageDown()) {
+                    this.pageIndex++;
+                    if (player.onServer()) this.updateDisplay();
+                    return true;
+                }
+            }
+            case 3 -> {
+                this.switchView(player);
+                return true;
+            }
+            case 4 -> {
+                this.toggleOrder(player);
+                return true;
+            }
         }
         return false;
     }
 
-    private void switchView() {
-        this.view = this.view.next();
-        // TODO
+    private void switchView(EntityPlayer player) {
+        this.resetPageIndex();
+        this.category = this.category.next();
+        if (player.onServer()) {
+            this.updateDisplay();
+        }
+    }
+
+    private void resetPageIndex() {
+        this.pageIndex = 0;
+    }
+
+    private void toggleOrder(EntityPlayer player) {
+        this.resetPageIndex();
+        this.order = this.order.next();
+        if (player.onServer()) {
+            this.updateDisplay();
+        }
     }
 
     @Environment(EnvType.SERVER)
@@ -152,12 +189,16 @@ public class ContainerShop extends Container {
 
     @Environment(EnvType.SERVER)
     public void updateDisplay() {
-        List<ItemStack> list = PriceStacks.getPurchasableStacks();
-        int merchandiseSize = list.size();
-        this.shopSize = merchandiseSize;
+        List<ItemStack> list = PriceStackStorage.getDirtyStacks().stream()
+                .filter(PriceStackView.filter(this.category))
+                .sorted(PriceStackView.sort(this.category, this.order))
+                .toList();
+
+        int listSize = list.size();
+        this.shopSize = listSize;
         int entryIndex = this.pageIndex * pageSize;
-        if (entryIndex < merchandiseSize) {
-            List<ItemStack> currentPageList = list.subList(entryIndex, Math.min(entryIndex + pageSize, merchandiseSize));
+        if (entryIndex < listSize) {
+            List<ItemStack> currentPageList = list.subList(entryIndex, Math.min(entryIndex + pageSize, listSize));
             if (currentPageList.size() > 0) {
                 for (int i = 0; i < 45; i++) {
                     if (i < currentPageList.size()) {
@@ -170,17 +211,10 @@ public class ContainerShop extends Container {
         }
 
         ((ServerPlayer) this.player).sendContainerToPlayer(this);
+        ShopNetwork.sendToClient(
+                (ServerPlayer) this.player,
+                new S2CSyncShopInfo(listSize, ShopPlayer.getMoneyManager(this.player).getMoney())
+        );
     }
 
-    public enum View {
-        PURCHASABLE,
-        SELLABLE,
-        BOTH,
-        ;
-        static final ImmutableList<View> VALUES = ImmutableList.copyOf(values());
-
-        View next() {
-            return VALUES.get((this.ordinal() + 1) % VALUES.size());
-        }
-    }
 }
