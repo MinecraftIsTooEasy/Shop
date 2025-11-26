@@ -1,9 +1,9 @@
 package cn.wensc.mitemod.shop.event.listener;
 
 import cn.wensc.mitemod.shop.ShopInit;
+import cn.wensc.mitemod.shop.client.screen.GuiShop;
 import cn.wensc.mitemod.shop.network.ShopNetwork;
 import cn.wensc.mitemod.shop.network.packets.C2S.C2SOpenShop;
-import cn.wensc.mitemod.shop.client.screen.GuiShop;
 import moddedmite.rustedironcore.api.event.listener.ITickListener;
 import net.minecraft.GuiScreen;
 import net.minecraft.Minecraft;

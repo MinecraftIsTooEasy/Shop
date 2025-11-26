@@ -9,6 +9,7 @@ public enum EnumIcon implements IGuiIcon {
     BUTTON_BACKGROUND_DISABLED(44, 222, 22, 22),
     BUTTON_BACKGROUND_HOVER(66, 222, 22, 22),
     SWITCH_VIEW(88, 222, 22, 22),
+    TOGGLE_ORDER(110, 222, 22, 22),
     ;
 
     private final int u;

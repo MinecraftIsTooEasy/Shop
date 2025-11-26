@@ -1,7 +1,7 @@
 package cn.wensc.mitemod.shop.mixin;
 
-import cn.wensc.mitemod.shop.config.ShopConfigML;
 import cn.wensc.mitemod.shop.client.screen.GuiEditPrice;
+import cn.wensc.mitemod.shop.config.ShopConfigML;
 import net.minecraft.*;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;

@@ -2,7 +2,8 @@ package cn.wensc.mitemod.shop.mixin;
 
 import cn.wensc.mitemod.shop.api.ShopPlayer;
 import cn.wensc.mitemod.shop.manager.MoneyManager;
-import net.minecraft.*;
+import net.minecraft.EntityPlayer;
+import net.minecraft.NBTTagCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

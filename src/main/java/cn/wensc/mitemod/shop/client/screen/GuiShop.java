@@ -18,8 +18,8 @@ import org.lwjgl.opengl.GL11;
 public class GuiShop extends GuiContainer {
     private GuiPaginationButton left;
     private GuiPaginationButton right;
-    private GuiSwitchViewButton switchView;
-    private GuiSwitchViewButton toggleOrder;
+    private ShopButtonBase switchView;
+    private ShopButtonBase toggleOrder;
 
     public GuiShop(EntityPlayer player) {
         super(new ContainerShop(player));
@@ -33,8 +33,8 @@ public class GuiShop extends GuiContainer {
         this.buttonList.clear();
         this.buttonList.add(this.left = new GuiPaginationButton(1, this.guiLeft + 6, this.height / 2 - 4, false));
         this.buttonList.add(this.right = new GuiPaginationButton(2, this.guiLeft + 176 - 19, this.height / 2 - 4, true));
-        this.buttonList.add(this.switchView = new GuiSwitchViewButton(3, this.guiLeft - 26, this.guiTop + 34));
-        this.buttonList.add(this.toggleOrder = new GuiSwitchViewButton(4, this.guiLeft - 26, this.guiTop + 64));
+        this.buttonList.add(this.switchView = new ShopButtonBase(3, this.guiLeft - 26, this.guiTop + 34, EnumIcon.SWITCH_VIEW));
+        this.buttonList.add(this.toggleOrder = new ShopButtonBase(4, this.guiLeft - 26, this.guiTop + 64, EnumIcon.TOGGLE_ORDER));
         this.left.enabled = false;
         this.right.enabled = false;
     }
